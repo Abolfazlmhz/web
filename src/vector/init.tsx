@@ -26,6 +26,7 @@ import PWAPlatform from "./platform/PWAPlatform";
 import WebPlatform from "./platform/WebPlatform";
 import { initRageshake, initRageshakeStore } from "./rageshakesetup";
 import { ModuleApi } from "../modules/Api.ts";
+import { getDocumentDirection } from "../utils/RTLUtils";
 
 export const rageshakePromise = initRageshake();
 
@@ -84,7 +85,9 @@ export async function loadLanguage(): Promise<void> {
     }
     try {
         await languageHandler.setLanguage(...langs);
-        document.documentElement.setAttribute("lang", languageHandler.getCurrentLanguage());
+        const currentLanguage = languageHandler.getCurrentLanguage();
+        document.documentElement.setAttribute("lang", currentLanguage);
+        document.documentElement.setAttribute("dir", getDocumentDirection(currentLanguage));
     } catch (e) {
         logger.error("Unable to set language", e);
     }

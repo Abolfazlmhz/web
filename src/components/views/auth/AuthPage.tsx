@@ -11,7 +11,7 @@ import React from "react";
 import classNames from "classnames";
 
 import SdkConfig from "../../../SdkConfig";
-import AuthFooter from "./AuthFooter";
+//import AuthFooter from "./AuthFooter";
 
 interface IProps {
     /**
@@ -93,7 +93,7 @@ export default class AuthPage extends React.PureComponent<React.PropsWithChildre
                         {this.props.children}
                     </div>
                 </div>
-                <AuthFooter />
+                {/*<AuthFooter />*/}
             </div>
         );
     }

@@ -24,7 +24,7 @@ import PasswordLogin from "../../views/auth/PasswordLogin";
 import InlineSpinner from "../../views/elements/InlineSpinner";
 import Spinner from "../../views/elements/Spinner";
 import SSOButtons from "../../views/elements/SSOButtons";
-import ServerPicker from "../../views/elements/ServerPicker";
+//import ServerPicker from "../../views/elements/ServerPicker";
 import AuthBody from "../../views/auth/AuthBody";
 import AuthHeader from "../../views/auth/AuthHeader";
 import AccessibleButton, { type ButtonEvent } from "../../views/elements/AccessibleButton";
@@ -538,11 +538,11 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
                     </h1>
                     {errorTextSection}
                     {serverDeadSection}
-                    <ServerPicker
+                    {/*<ServerPicker
                         serverConfig={this.props.serverConfig}
                         onServerConfigChange={this.props.onServerConfigChange}
                         disabled={this.isBusy()}
-                    />
+                    />*/}
                     {this.renderLoginComponentForFlows()}
                     {footer}
                 </AuthBody>

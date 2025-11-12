@@ -163,6 +163,38 @@ we don't have an account and should hide them. No account == no guest account ei
             margin: 0 0 10px 0;
         }
     }
+
+    /* RTL support for welcome page */
+    [dir="rtl"] .mx_Parent {
+        direction: rtl;
+    }
+
+    [dir="rtl"] .mx_ButtonParent {
+        background-position: calc(100% - 10px) center;
+        flex-direction: row-reverse;
+    }
+
+    [dir="rtl"] .mx_ButtonLabel {
+        margin-left: 0;
+        margin-right: 20px;
+    }
+
+    [dir="rtl"] .mx_ButtonRow > *:first-child {
+        margin-left: 10px;
+        margin-right: 0;
+    }
+
+    [dir="rtl"] .mx_ButtonRow > *:last-child {
+        margin-right: 10px;
+        margin-left: 0;
+    }
+
+    /* RTL responsive adjustments */
+    @media only screen and (max-width: 480px) {
+        [dir="rtl"] .mx_ButtonRow > * {
+            margin: 0 0 10px 0;
+        }
+    }
 </style>
 
 <div class="mx_Parent">
@@ -171,7 +203,7 @@ we don't have an account and should hide them. No account == no guest account ei
     </a>
     <h1 class="mx_Header_title">_t("welcome_to_element")</h1>
     <!-- XXX: Our translations system isn't smart enough to recognize variables in the HTML, so we manually do it -->
-    <h4 class="mx_Header_subtitle">_t("powered_by_matrix_with_logo")</h4>
+    <!--<h4 class="mx_Header_subtitle">_t("powered_by_matrix_with_logo")</h4>-->
     <div class="mx_ButtonGroup">
         <div class="mx_ButtonRow">
             <a href="#/login" class="mx_ButtonParent mx_ButtonSignIn mx_Button_iconSignIn">

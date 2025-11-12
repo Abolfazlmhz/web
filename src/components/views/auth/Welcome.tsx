@@ -15,7 +15,7 @@ import SettingsStore from "../../../settings/SettingsStore";
 import { UIFeature } from "../../../settings/UIFeature";
 import LanguageSelector from "./LanguageSelector";
 import EmbeddedPage from "../../structures/EmbeddedPage";
-import { MATRIX_LOGO_HTML } from "../../structures/static-page-vars";
+//import { MATRIX_LOGO_HTML } from "../../structures/static-page-vars";
 
 export default class Welcome extends React.PureComponent<EmptyObject> {
     public render(): React.ReactNode {
@@ -28,8 +28,10 @@ export default class Welcome extends React.PureComponent<EmptyObject> {
         const replaceMap: Record<string, string> = {
             "$riot:ssoUrl": "#/start_sso",
             "$riot:casUrl": "#/start_cas",
-            "$matrixLogo": MATRIX_LOGO_HTML,
-            "[matrix]": MATRIX_LOGO_HTML,
+            //"$matrixLogo": MATRIX_LOGO_HTML,
+            ///"[matrix]": MATRIX_LOGO_HTML,
+            "$matrixLogo": '',
+            "[matrix]": '',
         };
 
         if (!pageUrl) {

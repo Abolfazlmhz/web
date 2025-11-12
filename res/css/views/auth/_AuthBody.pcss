@@ -275,3 +275,59 @@ Please see LICENSE files in the repository root for full details.
         padding: 10px;
     }
 }
+
+/* RTL support for auth body */
+[dir="rtl"] .mx_AuthBody {
+    border-radius: 4px 0 0 4px;
+    direction: rtl;
+
+    .mx_AuthBody_text {
+        text-align: right;
+    }
+
+    h1,
+    h2 {
+        text-align: right;
+    }
+
+    h2.mx_AuthBody_centered {
+        text-align: center;
+    }
+
+    .mx_Field label {
+        text-align: right;
+    }
+
+    .mx_AuthBody_changeFlow {
+        text-align: center;
+    }
+
+    .mx_AuthBody_paddedFooter {
+        text-align: center;
+
+        .mx_InlineSpinner img {
+            margin-left: 5px;
+            margin-right: 0;
+        }
+    }
+
+    .mx_AuthBody_fieldRow {
+        direction: rtl;
+
+        > .mx_Field:first-child {
+            margin-left: 5px;
+            margin-right: 0;
+        }
+
+        > .mx_Field:last-child {
+            margin-right: 5px;
+            margin-left: 0;
+        }
+    }
+}
+
+[dir="rtl"] .mx_AuthBody.mx_AuthBody_forgot-password {
+    .mx_AuthBody_text p {
+        text-align: right;
+    }
+}

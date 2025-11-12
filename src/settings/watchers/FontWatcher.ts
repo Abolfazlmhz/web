@@ -14,6 +14,8 @@ import { Action } from "../../dispatcher/actions";
 import { SettingLevel } from "../SettingLevel";
 import { type UpdateSystemFontPayload } from "../../dispatcher/payloads/UpdateSystemFontPayload";
 import { type ActionPayload } from "../../dispatcher/payloads";
+import { getCurrentLanguage } from "../../languageHandler";
+import { isRTLLanguage } from "../../utils/RTLUtils";
 
 export class FontWatcher implements IWatcher {
     /**
@@ -154,6 +156,9 @@ export class FontWatcher implements IWatcher {
             useSystemFont: SettingsStore.getValue("useSystemFont"),
             font: SettingsStore.getValue("systemFont"),
         });
+
+        // Apply Vazir font for Farsi (Persian) language
+        this.applyLanguageSpecificFont();
     }
 
     private onAction = (payload: ActionPayload): void => {
@@ -190,6 +195,7 @@ export class FontWatcher implements IWatcher {
     public static readonly FONT_FAMILY_CUSTOM_PROPERTY = "--cpd-font-family-sans";
     public static readonly EMOJI_FONT_FAMILY_CUSTOM_PROPERTY = "--emoji-font-family";
     public static readonly BUNDLED_EMOJI_FONT = "Twemoji";
+    public static readonly VAZIR_FONT = "Vazirmatn";
 
     private setSystemFont = ({
         useBundledEmojiFont,
@@ -230,4 +236,26 @@ export class FontWatcher implements IWatcher {
             }
         }
     };
+
+    /**
+     * Apply language-specific fonts (e.g., Vazir for Farsi)
+     */
+    private applyLanguageSpecificFont(): void {
+        const currentLanguage = getCurrentLanguage();
+
+        // Apply Vazir font for Farsi (Persian) language
+        if (isRTLLanguage(currentLanguage) && currentLanguage.startsWith('fa')) {
+            // Only apply Vazir if no custom system font is set
+            const useSystemFont = SettingsStore.getValue("useSystemFont");
+            if (!useSystemFont) {
+                document.body.style.setProperty(FontWatcher.FONT_FAMILY_CUSTOM_PROPERTY, FontWatcher.VAZIR_FONT);
+            }
+        } else {
+            // For non-Farsi languages, remove Vazir font override to use default
+            const currentFontFamily = document.body.style.getPropertyValue(FontWatcher.FONT_FAMILY_CUSTOM_PROPERTY);
+            if (currentFontFamily === FontWatcher.VAZIR_FONT) {
+                document.body.style.removeProperty(FontWatcher.FONT_FAMILY_CUSTOM_PROPERTY);
+            }
+        }
+    }
 }

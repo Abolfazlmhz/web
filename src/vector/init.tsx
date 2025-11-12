@@ -67,10 +67,18 @@ export async function loadLanguage(): Promise<void> {
     const prefLang = SettingsStore.getValue("language", null, /*excludeDefault=*/ true);
     let langs: string[] = [];
 
+
     if (!prefLang) {
-        languageHandler.getLanguagesFromBrowser().forEach((l) => {
-            langs.push(...languageHandler.getNormalizedLanguageKeys(l));
-        });
+        // Check config default first
+        const configDefault = SettingsStore.getValue("language", null, /*excludeDefault=*/ false);
+        if (configDefault && typeof configDefault === "string") {
+            langs = [configDefault];
+        } else {
+            // Fall back to browser languages
+            languageHandler.getLanguagesFromBrowser().forEach((l) => {
+                langs.push(...languageHandler.getNormalizedLanguageKeys(l));
+            });
+        }
     } else {
         langs = [prefLang];
     }

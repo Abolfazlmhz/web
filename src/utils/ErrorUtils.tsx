@@ -120,11 +120,11 @@ export function messageForLoginError(
             return (
                 <div>
                     <div>{_t("auth|incorrect_credentials")}</div>
-                    <div className="mx_Login_smallError">
+                    {/*<div className="mx_Login_smallError">
                         {_t("auth|incorrect_credentials_detail", {
                             hs: serverConfig.hsName,
                         })}
-                    </div>
+                    </div>*/}
                 </div>
             );
         } else {

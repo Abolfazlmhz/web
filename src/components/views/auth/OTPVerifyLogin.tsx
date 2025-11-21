@@ -1,0 +1,218 @@
+/*
+Copyright 2024 New Vector Ltd.
+
+SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Commercial
+Please see LICENSE files in the repository root for full details.
+*/
+
+import React, { type JSX, type SyntheticEvent } from "react";
+import { logger } from "matrix-js-sdk/src/logger";
+
+import { _t } from "../../../languageHandler";
+import { type ValidatedServerConfig } from "../../../utils/ValidatedServerConfig";
+import AccessibleButton, { type ButtonEvent } from "../elements/AccessibleButton";
+import Field from "../elements/Field";
+import Spinner from "../elements/Spinner";
+import { OTPAuth, type OTPVerifyResponse } from "../../../utils/OTPAuth";
+
+// For validating OTP codes (typically 4-6 digits)
+const OTP_REGEX = /^[0-9]{4,6}$/;
+
+interface IProps {
+    serverConfig: ValidatedServerConfig;
+    phoneNumber: string;
+    disableSubmit?: boolean;
+    busy?: boolean;
+
+    onOTPVerified(loginToken: string): void;
+    onBack(): void;
+    onResendOTP(): void;
+}
+
+interface IState {
+    otp: string;
+    otpValid: boolean;
+    verifyingOTP: boolean;
+    errorMessage?: string;
+    resendDisabled: boolean;
+    countdown: number;
+}
+
+export default class OTPVerifyLogin extends React.Component<IProps, IState> {
+    private otpFieldRef: React.RefObject<Field> = React.createRef();
+    private countdownInterval?: number;
+
+    public constructor(props: IProps) {
+        super(props);
+
+        this.state = {
+            otp: "",
+            otpValid: false,
+            verifyingOTP: false,
+            resendDisabled: true,
+            countdown: 60, // 60 seconds countdown for resend
+        };
+    }
+
+    public componentDidMount(): void {
+        this.startCountdown();
+    }
+
+    public componentWillUnmount(): void {
+        if (this.countdownInterval) {
+            clearInterval(this.countdownInterval);
+        }
+    }
+
+    private startCountdown(): void {
+        this.setState({ resendDisabled: true, countdown: 60 });
+
+        this.countdownInterval = window.setInterval(() => {
+            this.setState((prevState) => {
+                if (prevState.countdown <= 1) {
+                    if (this.countdownInterval) {
+                        clearInterval(this.countdownInterval);
+                    }
+                    return { resendDisabled: false, countdown: 0 };
+                }
+                return { countdown: prevState.countdown - 1 };
+            });
+        }, 1000);
+    }
+
+    private onOTPChange = (ev: SyntheticEvent<HTMLInputElement>): void => {
+        const otp = ev.currentTarget.value;
+        const otpValid = OTP_REGEX.test(otp);
+
+        this.setState({
+            otp,
+            otpValid,
+            errorMessage: undefined,
+        });
+    };
+
+    private onSubmit = async (ev: SyntheticEvent): Promise<void> => {
+        ev.preventDefault();
+
+        if (!this.state.otpValid || this.state.verifyingOTP) {
+            return;
+        }
+
+        this.setState({
+            verifyingOTP: true,
+            errorMessage: undefined,
+        });
+
+        try {
+            const response: OTPVerifyResponse = await OTPAuth.verifyOTP(
+                this.props.serverConfig.hsUrl,
+                this.props.phoneNumber,
+                this.state.otp,
+            );
+
+            if (response.success && response.login_token) {
+                this.props.onOTPVerified(response.login_token);
+            } else {
+                this.setState({
+                    errorMessage: response.message || _t("auth|otp_verification_failed"),
+                });
+            }
+        } catch (error) {
+            logger.error("OTP verification failed:", error);
+            this.setState({
+                errorMessage: _t("auth|otp_verification_failed"),
+            });
+        } finally {
+            this.setState({
+                verifyingOTP: false,
+            });
+        }
+    };
+
+    private onBackClick = (ev: ButtonEvent): void => {
+        ev.preventDefault();
+        this.props.onBack();
+    };
+
+    private onResendClick = (ev: ButtonEvent): void => {
+        ev.preventDefault();
+        if (!this.state.resendDisabled) {
+            this.props.onResendOTP();
+            this.startCountdown();
+        }
+    };
+
+    public render(): JSX.Element {
+        const { otp, otpValid, verifyingOTP, errorMessage, resendDisabled, countdown } = this.state;
+
+        let submitButtonOrSpinner: JSX.Element;
+        if (verifyingOTP) {
+            submitButtonOrSpinner = <Spinner />;
+        } else {
+            submitButtonOrSpinner = (
+                <AccessibleButton
+                    type="submit"
+                    kind="primary"
+                    disabled={!otpValid || this.props.disableSubmit}
+                    onClick={this.onSubmit}
+                >
+                    {_t("auth|verify_otp")}
+                </AccessibleButton>
+            );
+        }
+
+        return (
+            <div>
+                <div className="mx_AuthBody_fieldRow">
+                    <p>{_t("auth|otp_sent_to", { phoneNumber: this.props.phoneNumber })}</p>
+                </div>
+
+                <form onSubmit={this.onSubmit}>
+                    <div className="mx_AuthBody_fieldRow">
+                        <Field
+                            name="otp"
+                            ref={this.otpFieldRef}
+                            type="text"
+                            label={_t("auth|otp_code_label")}
+                            placeholder={_t("auth|otp_code_placeholder")}
+                            value={otp}
+                            onChange={this.onOTPChange}
+                            disabled={verifyingOTP}
+                            autoFocus
+                            dir="ltr"
+                        />
+                    </div>
+
+                    {errorMessage && (
+                        <div className="mx_AuthBody_error">
+                            {errorMessage}
+                        </div>
+                    )}
+
+                    <div className="mx_AuthBody_buttons">
+                        <AccessibleButton
+                            kind="link"
+                            onClick={this.onBackClick}
+                            disabled={verifyingOTP}
+                        >
+                            {_t("action|back")}
+                        </AccessibleButton>
+
+                        <AccessibleButton
+                            kind="link"
+                            onClick={this.onResendClick}
+                            disabled={resendDisabled || verifyingOTP}
+                        >
+                            {resendDisabled
+                                ? _t("auth|resend_otp_in", { seconds: countdown })
+                                : _t("auth|resend_otp")
+                            }
+                        </AccessibleButton>
+
+                        {submitButtonOrSpinner}
+                    </div>
+                </form>
+            </div>
+        );
+    }
+}

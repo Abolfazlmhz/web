@@ -195,6 +195,15 @@ export default class Login {
                 throw error;
             });
     }
+
+    public loginViaToken(token: string, deviceDisplayName?: string): Promise<IMatrixClientCreds> {
+        const loginParams = {
+            token,
+            initial_device_display_name: deviceDisplayName || this.defaultDeviceDisplayName,
+        };
+
+        return sendLoginRequest(this.hsUrl, this.isUrl, "m.login.token", loginParams);
+    }
 }
 
 /**

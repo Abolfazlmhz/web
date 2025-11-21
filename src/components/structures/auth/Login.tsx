@@ -21,6 +21,8 @@ import SettingsStore from "../../../settings/SettingsStore";
 import { UIFeature } from "../../../settings/UIFeature";
 import { type IMatrixClientCreds } from "../../../MatrixClientPeg";
 import PasswordLogin from "../../views/auth/PasswordLogin";
+import OTPPhoneLogin from "../../views/auth/OTPPhoneLogin";
+import OTPVerifyLogin from "../../views/auth/OTPVerifyLogin";
 import InlineSpinner from "../../views/elements/InlineSpinner";
 import Spinner from "../../views/elements/Spinner";
 import SSOButtons from "../../views/elements/SSOButtons";
@@ -70,6 +72,10 @@ interface IState {
     phoneCountry: string;
     phoneNumber: string;
 
+    // OTP-specific state
+    otpPhoneNumber: string;
+    currentLoginType: string;
+
     // We perform liveliness checks later, but for now suppress the errors.
     // We also track the server dead errors independently of the regular errors so
     // that we can render it differently, and override any other error the user may
@@ -106,6 +112,10 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
             phoneCountry: "",
             phoneNumber: "",
 
+            // OTP-specific state
+            otpPhoneNumber: "",
+            currentLoginType: "otpPhone",
+
             serverIsAlive: true,
             serverErrorIsFatal: false,
             serverDeadError: "",
@@ -122,6 +132,8 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
             // eslint-disable-next-line @typescript-eslint/naming-convention
             "m.login.sso": () => this.renderSsoStep("sso"),
             "oidcNativeFlow": () => this.renderOidcNativeStep(),
+            "otpPhone": this.renderOTPPhoneStep,
+            "otpVerify": this.renderOTPVerifyStep,
         };
     }
 
@@ -416,6 +428,98 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
         );
     }
 
+    private renderOTPOption = (): JSX.Element => {
+        return (
+            <div className="mx_Login_otpOption">
+                <AccessibleButton
+                    kind="link"
+                    onClick={() => this.setState({ currentLoginType: "otpPhone" })}
+                    disabled={this.isBusy()}
+                >
+                    {_t("auth|sign_in_with_otp")}
+                </AccessibleButton>
+            </div>
+        );
+    };
+
+    private renderAlternativeLoginOptions = (): JSX.Element => {
+        return (
+            <div className="mx_Login_alternativeOptions">
+                <div className="mx_Login_separator">
+                    <span>{_t("auth|or")}</span>
+                </div>
+                <AccessibleButton
+                    kind="link"
+                    onClick={() => this.setState({ currentLoginType: "m.login.password" })}
+                    disabled={this.isBusy()}
+                >
+                    {_t("auth|sign_in_with_password")}
+                </AccessibleButton>
+            </div>
+        );
+    };
+
+    private onOTPPhoneNumberChanged = (phoneNumber: string): void => {
+        this.setState({ otpPhoneNumber: phoneNumber });
+    };
+
+    private onOTPRequested = (phoneNumber: string): void => {
+        this.setState({
+            otpPhoneNumber: phoneNumber,
+            currentLoginType: "otpVerify",
+        });
+    };
+
+    private onOTPVerified = async (loginToken: string): Promise<void> => {
+        try {
+            this.setState({ busyLoggingIn: true });
+            const creds = await Login.loginViaToken(loginToken, this.props.defaultDeviceDisplayName);
+            this.props.onLoggedIn(creds);
+        } catch (error) {
+            logger.error("OTP login failed:", error);
+            this.setState({
+                errorText: _t("auth|incorrect_credentials"),
+                busyLoggingIn: false,
+            });
+        }
+    };
+
+    private onOTPBack = (): void => {
+        this.setState({ currentLoginType: "otpPhone" });
+    };
+
+    private onOTPResend = (): void => {
+        // Reset to phone input step to allow resending
+        this.setState({ currentLoginType: "otpPhone" });
+    };
+
+    private renderOTPPhoneStep = (): JSX.Element => {
+        return (
+            <OTPPhoneLogin
+                serverConfig={this.props.serverConfig}
+                onPhoneNumberChanged={this.onOTPPhoneNumberChanged}
+                onOTPRequested={this.onOTPRequested}
+                onBack={() => this.setState({ currentLoginType: "m.login.password" })}
+                disableSubmit={this.state.busy}
+                busy={this.state.busy}
+            />
+        );
+    };
+
+    private renderOTPVerifyStep = (): JSX.Element => {
+        return (
+            <OTPVerifyLogin
+                serverConfig={this.props.serverConfig}
+                phoneNumber={this.state.otpPhoneNumber}
+                onOTPVerified={this.onOTPVerified}
+                onBack={this.onOTPBack}
+                onResendOTP={this.onOTPResend}
+                disableSubmit={this.state.busy}
+                busy={this.state.busy}
+            />
+        );
+    };
+
     private renderPasswordStep = (): JSX.Element => {
         return (
             <PasswordLogin
@@ -543,7 +647,17 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
                         onServerConfigChange={this.props.onServerConfigChange}
                         disabled={this.isBusy()}
                     />*/}
-                    {this.renderLoginComponentForFlows()}
+                    {this.state.currentLoginType.startsWith("otp") ? (
+                        <>
+                            {this.stepRendererMap[this.state.currentLoginType]()}
+                            {this.renderAlternativeLoginOptions()}
+                        </>
+                    ) : (
+                        <>
+                            {this.renderLoginComponentForFlows()}
+                            {this.renderOTPOption()}
+                        </>
+                    )}
                     {footer}
                 </AuthBody>
             </AuthPage>

@@ -1447,7 +1447,13 @@ $left-gutter: 64px;
 
 /* Media query for mobile UI */
 @media only screen and (max-width: 480px) {
+    .mx_EventTile_line,
+    .mx_EventTile_reply {
+        padding-left: 0;
+        margin-right: 0;
+    }
     .mx_EventTile_content {
+        margin-top: 10px;
         margin-right: 0;
     }
 }

@@ -39,6 +39,7 @@ import ErrorIcon from "@vector-im/compound-design-tokens/assets/web/icons/error"
 import ErrorSolidIcon from "@vector-im/compound-design-tokens/assets/web/icons/error-solid";
 import ChevronDownIcon from "@vector-im/compound-design-tokens/assets/web/icons/chevron-down";
 import { Icon as ChargeIcon } from "../../../../res/img/element-icons/charge.svg";
+import { Icon as BillIcon } from "../../../../res/img/element-icons/bill.svg";
 import { JoinRule, type Room } from "matrix-js-sdk/src/matrix";
 import { Box, Flex } from "@element-hq/web-shared-components";
 
@@ -278,6 +279,11 @@ const RoomSummaryCardView: React.FC<IProps> = ({
                             Icon={ChargeIcon}
                             label="خرید شارژ"
                             onSelect={vm.onChargePurchaseClick}
+                        />
+                        <MenuItem
+                            Icon={BillIcon}
+                            label="پرداخت قبض"
+                            onSelect={vm.onBillPaymentClick}
                         />
                     </>
                 )}

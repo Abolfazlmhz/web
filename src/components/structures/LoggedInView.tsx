@@ -63,6 +63,7 @@ import { TimelineRenderingType } from "../../contexts/RoomContext";
 import RightPanel from "./RightPanel";
 import CardToCardCard from "../views/right_panel/CardToCardCard";
 import ChargePurchaseCard from "../views/right_panel/ChargePurchaseCard";
+import BillPaymentCard from "../views/right_panel/BillPaymentCard";
 import { KeyBindingAction } from "../../accessibility/KeyboardShortcuts";
 import { type SwitchSpacePayload } from "../../dispatcher/payloads/SwitchSpacePayload";
 import LeftPanelLiveShareWarning from "../views/beacon/LeftPanelLiveShareWarning";
@@ -709,8 +710,9 @@ class LoggedInView extends React.Component<IProps, IState> {
         const currentCard = RightPanelStore.instance.currentCard;
         const isCardToCard = currentCard.phase === RightPanelPhases.CardToCard;
         const isChargePurchase = currentCard.phase === RightPanelPhases.ChargePurchase;
+        const isBillPayment = currentCard.phase === RightPanelPhases.BillPayment;
         this.setState({
-            showRightPanel: (isCardToCard || isChargePurchase) && RightPanelStore.instance.isOpen,
+            showRightPanel: (isCardToCard || isChargePurchase || isBillPayment) && RightPanelStore.instance.isOpen,
             rightPanelPhase: currentCard.phase,
         });
     };
@@ -819,6 +821,9 @@ class LoggedInView extends React.Component<IProps, IState> {
                             )}
                             {this.state.showRightPanel && this.state.rightPanelPhase === RightPanelPhases.ChargePurchase && (
                                 <ChargePurchaseCard onClose={() => RightPanelStore.instance.togglePanel(null)} />
+                            )}
+                            {this.state.showRightPanel && this.state.rightPanelPhase === RightPanelPhases.BillPayment && (
+                                <BillPaymentCard onClose={() => RightPanelStore.instance.togglePanel(null)} />
                             )}
                         </div>
                     </div>

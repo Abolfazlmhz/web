@@ -322,6 +322,31 @@ const ChargePurchaseButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollaps
     );
 };
 
+const BillPaymentButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> = ({ isPanelCollapsed }) => {
+    const onBillPaymentClick = (): void => {
+        RightPanelStore.instance.setCard({ phase: RightPanelPhases.BillPayment }, true, undefined);
+    };
+
+    return (
+        <li
+            className={classNames("mx_SpaceItem", {
+                collapsed: isPanelCollapsed,
+            })}
+            role="treeitem"
+            aria-selected={false}
+        >
+            <SpaceButton
+                data-testid="bill-payment-button"
+                className="mx_SpaceButton_billPayment"
+                label="پرداخت قبض"
+                onClick={onBillPaymentClick}
+                isNarrow={isPanelCollapsed}
+                size="32px"
+            />
+        </li>
+    );
+};
+
 const metaSpaceComponentMap: Record<MetaSpace, typeof HomeButton> = {
     [MetaSpace.Home]: HomeButton,
     [MetaSpace.Favourites]: FavouritesButton,
@@ -423,6 +448,7 @@ const InnerSpacePanel = React.memo<IInnerSpacePanelProps>(
                 )}
                 <CardToCardButton isPanelCollapsed={isPanelCollapsed} />
                 <ChargePurchaseButton isPanelCollapsed={isPanelCollapsed} />
+                <BillPaymentButton isPanelCollapsed={isPanelCollapsed} />
             </IndicatorScrollbar>
         );
     },

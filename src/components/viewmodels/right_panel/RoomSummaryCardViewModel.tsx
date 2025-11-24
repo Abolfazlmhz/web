@@ -92,6 +92,7 @@ export interface RoomSummaryCardState {
     onInviteToRoomClick: () => void;
     onCardToCardClick: () => void;
     onChargePurchaseClick: () => void;
+    onBillPaymentClick: () => void;
 }
 
 /**
@@ -256,6 +257,10 @@ export function useRoomSummaryCardViewModel(
         RightPanelStore.instance.pushCard({ phase: RightPanelPhases.ChargePurchase }, true);
     };
 
+    const onBillPaymentClick = (): void => {
+        RightPanelStore.instance.pushCard({ phase: RightPanelPhases.BillPayment }, true);
+    };
+
     // Room Search element ref
     const { searchInputRef, onUpdateSearchInput } = useSearchInput(onSearchCancel);
 
@@ -286,5 +291,6 @@ export function useRoomSummaryCardViewModel(
         onInviteToRoomClick,
         onCardToCardClick,
         onChargePurchaseClick,
+        onBillPaymentClick,
     };
 }

@@ -101,6 +101,7 @@ const HomePage: React.FC<IProps> = ({ justRegistered = false }) => {
     );
     const isCardToCardOpen = currentCard.phase === RightPanelPhases.CardToCard && RightPanelStore.instance.isOpen;
     const isChargePurchaseOpen = currentCard.phase === RightPanelPhases.ChargePurchase && RightPanelStore.instance.isOpen;
+    const isBillPaymentOpen = currentCard.phase === RightPanelPhases.BillPayment && RightPanelStore.instance.isOpen;
 
     if (pageUrl) {
         return <EmbeddedPage className="mx_HomePage" url={pageUrl} scrollbar={true} />;
@@ -124,7 +125,7 @@ const HomePage: React.FC<IProps> = ({ justRegistered = false }) => {
 
     return (
         <AutoHideScrollbar className="mx_HomePage mx_HomePage_default" element="main">
-            {!isCardToCardOpen && !isChargePurchaseOpen && (
+            {!isCardToCardOpen && !isChargePurchaseOpen && !isBillPaymentOpen && (
                 <div className="mx_HomePage_default_wrapper">
                     {introSection}
                     <div className="mx_HomePage_default_buttons">

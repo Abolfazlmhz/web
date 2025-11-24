@@ -34,6 +34,7 @@ import { Action } from "../../dispatcher/actions";
 import { type XOR } from "../../@types/common";
 import ExtensionsCard from "../views/right_panel/ExtensionsCard";
 import CardToCardCard from "../views/right_panel/CardToCardCard";
+import BillPaymentCard from "../views/right_panel/BillPaymentCard";
 import MemberListView from "../views/rooms/MemberList/MemberListView";
 
 interface BaseProps {
@@ -282,6 +283,10 @@ export default class RightPanel extends React.Component<Props, IState> {
 
             case RightPanelPhases.ChargePurchase:
                 // ChargePurchase is now displayed in LoggedInView overlay, not in RightPanel
+                break;
+
+            case RightPanelPhases.BillPayment:
+                // BillPayment is now displayed in LoggedInView overlay, not in RightPanel
                 break;
 
             case RightPanelPhases.Widget:

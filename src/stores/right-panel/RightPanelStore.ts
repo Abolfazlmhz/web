@@ -398,8 +398,12 @@ export default class RightPanelStore extends ReadyWatchingStore {
             logger.warn(`Tried to switch right panel to unknown phase: ${targetPhase}`);
             return false;
         }
-        // CardToCard and ChargePurchase don't require a room
-        if (targetPhase === RightPanelPhases.CardToCard || targetPhase === RightPanelPhases.ChargePurchase) {
+        // CardToCard, ChargePurchase and BillPayment don't require a room
+        if (
+            targetPhase === RightPanelPhases.CardToCard ||
+            targetPhase === RightPanelPhases.ChargePurchase ||
+            targetPhase === RightPanelPhases.BillPayment
+        ) {
             return true;
         }
         if (!isViewingRoom) {

@@ -12,7 +12,7 @@ import { logger } from "matrix-js-sdk/src/logger";
 import { type SSOFlow, SSOAction } from "matrix-js-sdk/src/matrix";
 
 import { _t, UserFriendlyError } from "../../../languageHandler";
-import Login, { type ClientLoginFlow, type OidcNativeFlow } from "../../../Login";
+import Login, { type ClientLoginFlow, type OidcNativeFlow, sendLoginRequest } from "../../../Login";
 import { messageForConnectionError, messageForLoginError } from "../../../utils/ErrorUtils";
 import AutoDiscoveryUtils from "../../../utils/AutoDiscoveryUtils";
 import AuthPage from "../../views/auth/AuthPage";
@@ -473,7 +473,15 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
     private onOTPVerified = async (loginToken: string): Promise<void> => {
         try {
             this.setState({ busyLoggingIn: true });
-            const creds = await Login.loginViaToken(loginToken, this.props.defaultDeviceDisplayName);
+            const creds = await sendLoginRequest(
+                this.props.serverConfig.hsUrl,
+                this.props.serverConfig.isUrl,
+                "m.login.token",
+                {
+                    token: loginToken,
+                    initial_device_display_name: this.props.defaultDeviceDisplayName,
+                },
+            );
             this.props.onLoggedIn(creds);
         } catch (error) {
             logger.error("OTP login failed:", error);

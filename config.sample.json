@@ -36,7 +36,25 @@
         "https://matrix-client.matrix.org": false
     },
     "setting_defaults": {
-        "breadcrumbs": true
+        "breadcrumbs": true,
+        "custom_themes": [
+            {
+                "name": "Agrino Green",
+                "is_dark": false,
+                "compound": {
+                    "--cpd-color-text-action-accent": "#1a5d3a",
+                    "--cpd-color-icon-accent-primary": "#1a5d3a",
+                    "--cpd-color-icon-accent-tertiary": "#1a5d3a",
+                    "--cpd-color-bg-action-primary-rest": "#1a5d3a",
+                    "--cpd-color-bg-action-primary-hovered": "#155030",
+                    "--cpd-color-bg-action-primary-pressed": "#0f3d25",
+                    "--cpd-color-text-on-solid-primary": "#ffffff",
+                    "--cpd-color-icon-success-primary": "#1a5d3a",
+                    "--cpd-color-green-200": "#a8d5ba",
+                    "--cpd-color-green-300": "#a8d5ba"
+                }
+            }
+        ]
     },
     "jitsi": {
         "preferred_domain": "meet.element.io"

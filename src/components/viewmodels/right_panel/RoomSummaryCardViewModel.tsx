@@ -90,6 +90,7 @@ export interface RoomSummaryCardState {
     onReportRoomClick: () => Promise<void>;
     onFavoriteToggleClick: () => void;
     onInviteToRoomClick: () => void;
+    onCardToCardClick: () => void;
 }
 
 /**
@@ -246,6 +247,10 @@ export function useRoomSummaryCardViewModel(
         inviteToRoom(room);
     };
 
+    const onCardToCardClick = (): void => {
+        RightPanelStore.instance.pushCard({ phase: RightPanelPhases.CardToCard }, true);
+    };
+
     // Room Search element ref
     const { searchInputRef, onUpdateSearchInput } = useSearchInput(onSearchCancel);
 
@@ -274,5 +279,6 @@ export function useRoomSummaryCardViewModel(
         onUpdateSearchInput,
         onFavoriteToggleClick,
         onInviteToRoomClick,
+        onCardToCardClick,
     };
 }

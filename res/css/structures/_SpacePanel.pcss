@@ -247,6 +247,17 @@ Please see LICENSE files in the repository root for full details.
             transform: rotate(45deg);
         }
 
+        &.mx_SpaceButton_cardToCard .mx_SpaceButton_icon {
+            background-color: $panel-actions;
+
+            &::before {
+                background-color: $secondary-content;
+                mask-image: url("$(res)/img/element-icons/card.svg");
+                mask-size: 18px;
+                mask-position: center;
+            }
+        }
+
         .mx_SpaceButton_menuButton {
             width: 20px;
             min-width: 20px; /* yay flex */

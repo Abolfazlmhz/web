@@ -268,6 +268,11 @@ const RoomSummaryCardView: React.FC<IProps> = ({
                             label={_t("right_panel|extensions_button")}
                             onSelect={vm.onRoomExtensionsClick}
                         />
+                        <MenuItem
+                            Icon={LinkIcon}
+                            label="کارت به کارت"
+                            onSelect={vm.onCardToCardClick}
+                        />
                     </>
                 )}
 

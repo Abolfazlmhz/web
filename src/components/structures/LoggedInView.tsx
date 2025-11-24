@@ -58,7 +58,10 @@ import { mediaFromMxc } from "../../customisations/Media";
 import { UserTab } from "../views/dialogs/UserTab";
 import { type OpenToTabPayload } from "../../dispatcher/payloads/OpenToTabPayload";
 import RightPanelStore from "../../stores/right-panel/RightPanelStore";
+import { RightPanelPhases } from "../../stores/right-panel/RightPanelStorePhases";
 import { TimelineRenderingType } from "../../contexts/RoomContext";
+import RightPanel from "./RightPanel";
+import CardToCardCard from "../views/right_panel/CardToCardCard";
 import { KeyBindingAction } from "../../accessibility/KeyboardShortcuts";
 import { type SwitchSpacePayload } from "../../dispatcher/payloads/SwitchSpacePayload";
 import LeftPanelLiveShareWarning from "../views/beacon/LeftPanelLiveShareWarning";
@@ -111,6 +114,8 @@ interface IState {
     useCompactLayout: boolean;
     activeCalls: Array<MatrixCall>;
     backgroundImage?: string;
+    showRightPanel: boolean;
+    rightPanelPhase: RightPanelPhases | null;
 }
 
 const NEW_ROOM_LIST_MIN_WIDTH = 224;
@@ -148,6 +153,8 @@ class LoggedInView extends React.Component<IProps, IState> {
             useCompactLayout: SettingsStore.getValue("useCompactLayout"),
             usageLimitDismissed: false,
             activeCalls: LegacyCallHandler.instance.getAllActiveCalls(),
+            showRightPanel: false,
+            rightPanelPhase: null,
         };
 
         // stash the MatrixClient in case we log out before we are unmounted
@@ -195,6 +202,9 @@ class LoggedInView extends React.Component<IProps, IState> {
 
         OwnProfileStore.instance.on(UPDATE_EVENT, this.refreshBackgroundImage);
         this.refreshBackgroundImage();
+
+        RightPanelStore.instance.on(UPDATE_EVENT, this.onRightPanelStoreUpdate);
+        this.onRightPanelStoreUpdate();
     }
 
     /**
@@ -246,6 +256,7 @@ class LoggedInView extends React.Component<IProps, IState> {
     public componentWillUnmount(): void {
         document.removeEventListener("keydown", this.onNativeKeyDown, false);
         LegacyCallHandler.instance.removeListener(LegacyCallHandlerEvent.CallState, this.onCallState);
+        RightPanelStore.instance.off(UPDATE_EVENT, this.onRightPanelStoreUpdate);
         this._matrixClient.removeListener(ClientEvent.AccountData, this.onAccountData);
         this._matrixClient.removeListener(ClientEvent.Sync, this.onSync);
         this._matrixClient.removeListener(RoomStateEvent.Events, this.onRoomStateEvents);
@@ -693,6 +704,15 @@ class LoggedInView extends React.Component<IProps, IState> {
         this._roomView.current?.handleScrollKey(ev);
     };
 
+    private onRightPanelStoreUpdate = (): void => {
+        const currentCard = RightPanelStore.instance.currentCard;
+        const isCardToCard = currentCard.phase === RightPanelPhases.CardToCard;
+        this.setState({
+            showRightPanel: isCardToCard && RightPanelStore.instance.isOpen,
+            rightPanelPhase: currentCard.phase,
+        });
+    };
+
     public render(): React.ReactNode {
         let pageElement;
 
@@ -790,7 +810,12 @@ class LoggedInView extends React.Component<IProps, IState> {
                             </div>
                         </div>
                         {!moduleRenderer && <ResizeHandle passRef={this.resizeHandler} id="lp-resizer" />}
-                        <div className="mx_RoomView_wrapper">{pageElement}</div>
+                        <div className="mx_RoomView_wrapper">
+                            {pageElement}
+                            {this.state.showRightPanel && this.state.rightPanelPhase === RightPanelPhases.CardToCard && (
+                                <CardToCardCard onClose={() => RightPanelStore.instance.togglePanel(null)} />
+                            )}
+                        </div>
                     </div>
                 </div>
                 <PipContainer />

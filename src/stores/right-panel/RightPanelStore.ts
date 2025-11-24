@@ -398,10 +398,14 @@ export default class RightPanelStore extends ReadyWatchingStore {
             logger.warn(`Tried to switch right panel to unknown phase: ${targetPhase}`);
             return false;
         }
+        // CardToCard doesn't require a room
+        if (targetPhase === RightPanelPhases.CardToCard) {
+            return true;
+        }
         if (!isViewingRoom) {
             logger.warn(
                 `Tried to switch right panel to a room phase: ${targetPhase}, ` +
-                    `but we are currently not viewing a room`,
+                `but we are currently not viewing a room`,
             );
             return false;
         }

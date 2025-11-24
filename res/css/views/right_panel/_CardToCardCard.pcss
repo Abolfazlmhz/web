@@ -1,0 +1,265 @@
+/*
+Copyright 2024 New Vector Ltd.
+
+SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Commercial
+Please see LICENSE files in the repository root for full details.
+*/
+
+.mx_CardToCardCard {
+    direction: rtl;
+    font-family: "Vazirmatn", system-ui, sans-serif;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+
+    .mx_CardToCardCard_container {
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .mx_CardToCardCard_header {
+        background: linear-gradient(135deg, #326430 0%, #2a5428 100%);
+        color: white;
+        padding: 32px 24px;
+        text-align: center;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .mx_CardToCardCard_headerContent {
+            flex: 1;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            margin-top: 0;
+        }
+
+        p {
+            opacity: 0.95;
+            font-size: 15px;
+            margin: 0;
+        }
+
+        .mx_CardToCardCard_closeBtn {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+        }
+    }
+
+    .mx_CardToCardCard_formBody {
+        padding: 40px 48px;
+    }
+
+    .mx_CardToCardCard_inputGroup {
+        margin-bottom: 24px;
+
+        label {
+            display: block;
+            margin-bottom: 9px;
+            font-weight: 600;
+            font-size: 15px;
+            color: #1e293b;
+        }
+    }
+
+    .mx_CardToCardCard_cardInputs {
+        display: flex;
+        gap: 16px;
+        direction: ltr;
+
+        input {
+            width: 100%;
+            padding: 14px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 18px;
+            text-align: center;
+            font-weight: 600;
+            background: white;
+            transition: all 0.25s;
+
+            &:focus {
+                outline: none;
+                border-color: #326430;
+                box-shadow: 0 0 0 3px rgba(50, 100, 48, 0.1);
+            }
+        }
+    }
+
+    .mx_CardToCardCard_amountWrapper {
+        position: relative;
+
+        .mx_CardToCardCard_tomanLabel {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: 600;
+            color: #475569;
+            pointer-events: none;
+        }
+
+        #amount {
+            padding-left: 80px !important;
+            text-align: right;
+            direction: rtl;
+            font-size: 19px;
+            font-weight: 600;
+        }
+    }
+
+    input[type="text"] {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 15px;
+        background: white;
+        transition: all 0.25s;
+
+        &:focus {
+            outline: none;
+            border-color: #326430;
+            box-shadow: 0 0 0 3px rgba(50, 100, 48, 0.1);
+        }
+    }
+
+    .mx_CardToCardCard_row {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 24px;
+
+        .mx_CardToCardCard_inputGroup {
+            flex: 1;
+            margin-bottom: 0;
+        }
+    }
+
+    .mx_CardToCardCard_otpGroup {
+        position: relative;
+
+        #otpInput {
+            padding-left: 150px !important;
+            letter-spacing: 10px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .mx_CardToCardCard_getOtpBtn {
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #326430;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+
+            &:disabled {
+                background: #cbd5e1;
+                color: #64748b;
+                cursor: not-allowed;
+            }
+        }
+    }
+
+    .mx_CardToCardCard_timer {
+        margin-top: 8px;
+        font-size: 13px;
+        color: #64748b;
+    }
+
+    .mx_CardToCardCard_btnPrimary {
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(135deg, #326430 0%, #2a5428 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 24px;
+        transition: all 0.2s;
+
+        &:hover:not(:disabled) {
+            background: linear-gradient(135deg, #2a5428 0%, #326430 100%);
+            box-shadow: 0 4px 12px rgba(50, 100, 48, 0.3);
+        }
+
+        &:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+    }
+}
+
+.mx_CardToCardCard_progressDialog {
+    direction: rtl;
+    font-family: "Vazirmatn", system-ui, sans-serif;
+
+    .mx_CardToCardCard_progressContent {
+        padding: 20px;
+        text-align: center;
+        min-width: 300px;
+    }
+}
+
+.mx_CardToCardCard_successDialog {
+    direction: rtl;
+    font-family: "Vazirmatn", system-ui, sans-serif;
+
+    .mx_CardToCardCard_successContent {
+        padding: 20px;
+        text-align: center;
+        min-width: 300px;
+
+        .mx_CardToCardCard_checkmark {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            animation: checkmarkScale 0.5s ease-out;
+
+            svg {
+                color: #326430;
+            }
+        }
+    }
+}
+
+@keyframes checkmarkScale {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

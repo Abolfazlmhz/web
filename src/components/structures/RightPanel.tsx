@@ -33,6 +33,7 @@ import { type IRightPanelCard, type IRightPanelCardState } from "../../stores/ri
 import { Action } from "../../dispatcher/actions";
 import { type XOR } from "../../@types/common";
 import ExtensionsCard from "../views/right_panel/ExtensionsCard";
+import CardToCardCard from "../views/right_panel/CardToCardCard";
 import MemberListView from "../views/rooms/MemberList/MemberListView";
 
 interface BaseProps {
@@ -93,6 +94,9 @@ export default class RightPanel extends React.Component<Props, IState> {
         let currentCard: IRightPanelCard | undefined;
         if (props.room) {
             currentCard = RightPanelStore.instance.currentCardForRoom(props.room.roomId);
+        } else {
+            // For phases that don't require a room (like CardToCard), use the global currentCard
+            currentCard = RightPanelStore.instance.currentCard;
         }
 
         return {
@@ -270,6 +274,10 @@ export default class RightPanel extends React.Component<Props, IState> {
                 if (!!this.props.room) {
                     card = <ExtensionsCard room={this.props.room} onClose={this.onClose} />;
                 }
+                break;
+
+            case RightPanelPhases.CardToCard:
+                // CardToCard is now displayed in LoggedInView overlay, not in RightPanel
                 break;
 
             case RightPanelPhases.Widget:

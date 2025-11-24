@@ -71,6 +71,8 @@ import { KeyboardShortcut } from "../settings/KeyboardShortcut";
 import { ModuleApi } from "../../../modules/Api.ts";
 import { useModuleSpacePanelItems } from "../../../modules/ExtrasApi.ts";
 import { ReleaseAnnouncement } from "../../structures/ReleaseAnnouncement";
+import RightPanelStore from "../../../stores/right-panel/RightPanelStore";
+import { RightPanelPhases } from "../../../stores/right-panel/RightPanelStorePhases";
 
 const useSpaces = (): [Room[], MetaSpace[], Room[], SpaceKey] => {
     const invites = useEventEmitterState<Room[]>(SpaceStore.instance, UPDATE_INVITED_SPACES, () => {
@@ -241,9 +243,9 @@ const CreateSpaceButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed"
     const onNewClick = menuDisplayed
         ? closeMenu
         : () => {
-              if (!isPanelCollapsed) setPanelCollapsed(true);
-              openMenu();
-          };
+            if (!isPanelCollapsed) setPanelCollapsed(true);
+            openMenu();
+        };
 
     return (
         <li
@@ -266,6 +268,31 @@ const CreateSpaceButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed"
             />
 
             {contextMenu}
+        </li>
+    );
+};
+
+const CardToCardButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> = ({ isPanelCollapsed }) => {
+    const onCardToCardClick = (): void => {
+        RightPanelStore.instance.setCard({ phase: RightPanelPhases.CardToCard }, true, undefined);
+    };
+
+    return (
+        <li
+            className={classNames("mx_SpaceItem", {
+                collapsed: isPanelCollapsed,
+            })}
+            role="treeitem"
+            aria-selected={false}
+        >
+            <SpaceButton
+                data-testid="card-to-card-button"
+                className="mx_SpaceButton_cardToCard"
+                label="کارت به کارت"
+                onClick={onCardToCardClick}
+                isNarrow={isPanelCollapsed}
+                size="32px"
+            />
         </li>
     );
 };
@@ -309,8 +336,8 @@ const InnerSpacePanel = React.memo<IInnerSpacePanelProps>(
                 style={
                     isDraggingOver
                         ? {
-                              pointerEvents: "none",
-                          }
+                            pointerEvents: "none",
+                        }
                         : undefined
                 }
                 element="ul"
@@ -369,6 +396,7 @@ const InnerSpacePanel = React.memo<IInnerSpacePanelProps>(
                 {shouldShowComponent(UIComponent.CreateSpaces) && (
                     <CreateSpaceButton isPanelCollapsed={isPanelCollapsed} setPanelCollapsed={setPanelCollapsed} />
                 )}
+                <CardToCardButton isPanelCollapsed={isPanelCollapsed} />
             </IndicatorScrollbar>
         );
     },

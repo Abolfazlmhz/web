@@ -297,6 +297,31 @@ const CardToCardButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">
     );
 };
 
+const ChargePurchaseButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> = ({ isPanelCollapsed }) => {
+    const onChargePurchaseClick = (): void => {
+        RightPanelStore.instance.setCard({ phase: RightPanelPhases.ChargePurchase }, true, undefined);
+    };
+
+    return (
+        <li
+            className={classNames("mx_SpaceItem", {
+                collapsed: isPanelCollapsed,
+            })}
+            role="treeitem"
+            aria-selected={false}
+        >
+            <SpaceButton
+                data-testid="charge-purchase-button"
+                className="mx_SpaceButton_chargePurchase"
+                label="خرید شارژ"
+                onClick={onChargePurchaseClick}
+                isNarrow={isPanelCollapsed}
+                size="32px"
+            />
+        </li>
+    );
+};
+
 const metaSpaceComponentMap: Record<MetaSpace, typeof HomeButton> = {
     [MetaSpace.Home]: HomeButton,
     [MetaSpace.Favourites]: FavouritesButton,
@@ -397,6 +422,7 @@ const InnerSpacePanel = React.memo<IInnerSpacePanelProps>(
                     <CreateSpaceButton isPanelCollapsed={isPanelCollapsed} setPanelCollapsed={setPanelCollapsed} />
                 )}
                 <CardToCardButton isPanelCollapsed={isPanelCollapsed} />
+                <ChargePurchaseButton isPanelCollapsed={isPanelCollapsed} />
             </IndicatorScrollbar>
         );
     },

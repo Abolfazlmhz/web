@@ -280,6 +280,10 @@ export default class RightPanel extends React.Component<Props, IState> {
                 // CardToCard is now displayed in LoggedInView overlay, not in RightPanel
                 break;
 
+            case RightPanelPhases.ChargePurchase:
+                // ChargePurchase is now displayed in LoggedInView overlay, not in RightPanel
+                break;
+
             case RightPanelPhases.Widget:
                 if (!!this.props.room && !!cardState?.widgetId) {
                     card = <WidgetCard room={this.props.room} widgetId={cardState.widgetId} onClose={this.onClose} />;

@@ -25,6 +25,7 @@ export enum RightPanelPhases {
     Timeline = "Timeline",
     Extensions = "Extensions",
     CardToCard = "CardToCard",
+    ChargePurchase = "ChargePurchase",
 
     // Thread stuff
     ThreadView = "ThreadView",

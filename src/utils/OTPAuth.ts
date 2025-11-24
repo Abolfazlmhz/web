@@ -14,9 +14,14 @@ export interface OTPRequestResponse {
 
 export interface OTPVerifyResponse {
     success: boolean;
-    login_token?: string;
+    access_token?: string;
     message?: string;
+    device_id?: string;
+    home_server?: string;
+    user_id?: string;
+    well_known?: Record<string, { base_url: string }>;
 }
+
 
 export class OTPAuth {
     private static readonly AUTH_ENDPOINT = "/_synapse/client/authentication";
@@ -88,9 +93,13 @@ export class OTPAuth {
 
             const data = await response.json();
             return {
-                success: true,
-                login_token: data.login_token,
+                access_token: data.access_token,
                 message: data.message,
+                well_known: data.well_known,
+                device_id: data.device_id,
+                home_server: data.home_server,
+                user_id: data.user_id,
+                success: true,
             };
         } catch (error) {
             logger.error("Failed to verify OTP:", error);

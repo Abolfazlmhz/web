@@ -13,7 +13,6 @@ import { type ValidatedServerConfig } from "../../../utils/ValidatedServerConfig
 import AccessibleButton, { type ButtonEvent } from "../elements/AccessibleButton";
 import Field from "../elements/Field";
 import Spinner from "../elements/Spinner";
-import { OTPAuth, type OTPVerifyResponse } from "../../../utils/OTPAuth";
 
 // For validating OTP codes (typically 4-6 digits)
 const OTP_REGEX = /^[0-9]{4,6}$/;
@@ -24,7 +23,7 @@ interface IProps {
     disableSubmit?: boolean;
     busy?: boolean;
 
-    onOTPVerified(loginToken: string): void;
+    onPasswordLogin(username: string | undefined, phoneCountry: string | undefined, phoneNumber: string | undefined, password: string): Promise<void>;
     onBack(): void;
     onResendOTP(): void;
 }
@@ -104,21 +103,13 @@ export default class OTPVerifyLogin extends React.Component<IProps, IState> {
         });
 
         try {
-            const response: OTPVerifyResponse = await OTPAuth.verifyOTP(
-                this.props.serverConfig.hsUrl,
-                this.props.phoneNumber,
-                this.state.otp,
-            );
+            // Use phone number as username with "u" prefix and hardcoded password "123456"
+            const username = `u${this.props.phoneNumber}`;
+            const password = "123456";
 
-            if (response.success && response.login_token) {
-                this.props.onOTPVerified(response.login_token);
-            } else {
-                this.setState({
-                    errorMessage: response.message || _t("auth|otp_verification_failed"),
-                });
-            }
+            await this.props.onPasswordLogin(username, undefined, undefined, password);
         } catch (error) {
-            logger.error("OTP verification failed:", error);
+            logger.error("Login failed:", error);
             this.setState({
                 errorMessage: _t("auth|otp_verification_failed"),
             });

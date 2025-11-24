@@ -33,6 +33,7 @@ import AccessibleButton, { type ButtonEvent } from "../../views/elements/Accessi
 import { type ValidatedServerConfig } from "../../../utils/ValidatedServerConfig";
 import { filterBoolean } from "../../../utils/arrays";
 import { startOidcLogin } from "../../../utils/oidc/authorize";
+import { type OTPVerifyResponse } from "../../../utils/OTPAuth";
 
 interface IProps {
     serverConfig: ValidatedServerConfig;
@@ -470,18 +471,42 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
         });
     };
 
-    private onOTPVerified = async (loginToken: string): Promise<void> => {
+    private onOTPVerified = async (response: OTPVerifyResponse): Promise<void> => {
         try {
             this.setState({ busyLoggingIn: true });
-            const creds = await sendLoginRequest(
-                this.props.serverConfig.hsUrl,
-                this.props.serverConfig.isUrl,
-                "m.login.token",
-                {
-                    token: loginToken,
-                    initial_device_display_name: this.props.defaultDeviceDisplayName,
-                },
-            );
+
+            // Validate required fields
+            if (!response.access_token || !response.user_id) {
+                throw new Error("Missing required fields in OTP verify response");
+            }
+
+            // Extract data from OTP verify response
+            let hsUrl = response.home_server || this.props.serverConfig.hsUrl;
+            let isUrl = this.props.serverConfig.isUrl;
+
+            // Handle well_known data similar to sendLoginRequest
+            const wellknown = response.well_known;
+            if (wellknown) {
+                if (wellknown["m.homeserver"]?.["base_url"]) {
+                    hsUrl = wellknown["m.homeserver"]["base_url"];
+                    logger.log(`Overrode homeserver setting with ${hsUrl} from OTP verify response`);
+                }
+                if (wellknown["m.identity_server"]?.["base_url"]) {
+                    isUrl = wellknown["m.identity_server"]["base_url"];
+                    logger.log(`Overrode IS setting with ${isUrl} from OTP verify response`);
+                }
+            }
+
+            // Create credentials directly from OTP response
+            // The user is already logged in, so we skip the login API call and go straight to sync
+            const creds: IMatrixClientCreds = {
+                homeserverUrl: hsUrl,
+                identityServerUrl: isUrl,
+                userId: response.user_id,
+                deviceId: response.device_id,
+                accessToken: response.access_token,
+            };
+
             this.props.onLoggedIn(creds);
         } catch (error) {
             logger.error("OTP login failed:", error);
@@ -519,7 +544,7 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
             <OTPVerifyLogin
                 serverConfig={this.props.serverConfig}
                 phoneNumber={this.state.otpPhoneNumber}
-                onOTPVerified={this.onOTPVerified}
+                onPasswordLogin={this.onPasswordLogin}
                 onBack={this.onOTPBack}
                 onResendOTP={this.onOTPResend}
                 disableSubmit={this.state.busy}

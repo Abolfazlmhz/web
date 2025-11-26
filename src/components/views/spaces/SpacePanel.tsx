@@ -368,6 +368,31 @@ const ServicesButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> 
     );
 };
 
+const AgricultureButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> = ({ isPanelCollapsed }) => {
+    const onAgricultureClick = (): void => {
+        RightPanelStore.instance.setCard({ phase: RightPanelPhases.Agriculture }, true, undefined);
+    };
+
+    return (
+        <li
+            className={classNames("mx_SpaceItem", {
+                collapsed: isPanelCollapsed,
+            })}
+            role="treeitem"
+            aria-selected={false}
+        >
+            <SpaceButton
+                data-testid="agriculture-button"
+                className="mx_SpaceButton_agriculture"
+                label="کشاورزی"
+                onClick={onAgricultureClick}
+                isNarrow={isPanelCollapsed}
+                size="32px"
+            />
+        </li>
+    );
+};
+
 const metaSpaceComponentMap: Record<MetaSpace, typeof HomeButton> = {
     [MetaSpace.Home]: HomeButton,
     [MetaSpace.Favourites]: FavouritesButton,
@@ -468,6 +493,7 @@ const InnerSpacePanel = React.memo<IInnerSpacePanelProps>(
                     <CreateSpaceButton isPanelCollapsed={isPanelCollapsed} setPanelCollapsed={setPanelCollapsed} />
                 )} */}
                 <ServicesButton isPanelCollapsed={isPanelCollapsed} />
+                <AgricultureButton isPanelCollapsed={isPanelCollapsed} />
                 {/* <CardToCardButton isPanelCollapsed={isPanelCollapsed} />
                 <ChargePurchaseButton isPanelCollapsed={isPanelCollapsed} />
                 <BillPaymentButton isPanelCollapsed={isPanelCollapsed} /> */}

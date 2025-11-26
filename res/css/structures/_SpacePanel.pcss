@@ -280,6 +280,17 @@ Please see LICENSE files in the repository root for full details.
             }
         }
 
+        &.mx_SpaceButton_services .mx_SpaceButton_icon {
+            background-color: $panel-actions;
+
+            &::before {
+                background-color: $secondary-content;
+                mask-image: url("$(res)/img/element-icons/services.svg");
+                mask-size: 18px;
+                mask-position: center;
+            }
+        }
+
         .mx_SpaceButton_menuButton {
             width: 20px;
             min-width: 20px; /* yay flex */

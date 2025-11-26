@@ -143,9 +143,10 @@ export default class OTPVerifyLogin extends React.Component<IProps, IState> {
             submitButtonOrSpinner = (
                 <AccessibleButton
                     type="submit"
-                    kind="primary"
+                    kind="primary_sm"
                     disabled={!otpValid || this.props.disableSubmit}
                     onClick={this.onSubmit}
+                    style={{ fontSize: "14px" }}
                 >
                     {_t("auth|verify_otp")}
                 </AccessibleButton>
@@ -181,13 +182,7 @@ export default class OTPVerifyLogin extends React.Component<IProps, IState> {
                     )}
 
                     <div className="mx_AuthBody_buttons">
-                        <AccessibleButton
-                            kind="link"
-                            onClick={this.onBackClick}
-                            disabled={verifyingOTP}
-                        >
-                            {_t("action|back")}
-                        </AccessibleButton>
+                        {submitButtonOrSpinner}
 
                         <AccessibleButton
                             kind="link"
@@ -200,7 +195,13 @@ export default class OTPVerifyLogin extends React.Component<IProps, IState> {
                             }
                         </AccessibleButton>
 
-                        {submitButtonOrSpinner}
+                        <AccessibleButton
+                            kind="link"
+                            onClick={this.onBackClick}
+                            disabled={verifyingOTP}
+                        >
+                            {_t("action|back")}
+                        </AccessibleButton>
                     </div>
                 </form>
             </div>

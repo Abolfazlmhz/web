@@ -23,4 +23,10 @@ yarn --cwd packages/shared-components link
 
 yarn link @element-hq/web-shared-components
 
+# Increase Node.js memory limit to prevent OOM during webpack build
+export NODE_OPTIONS="--max-old-space-size=4096"
+# Skip minification in Docker builds to reduce memory usage
+# The bundle will be larger but the build won't OOM
+export CI_PACKAGE=true
+
 VERSION=$DIST_VERSION yarn build

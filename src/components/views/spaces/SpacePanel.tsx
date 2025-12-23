@@ -148,6 +148,11 @@ const HomeButton: React.FC<MetaSpaceButtonProps> = ({ selected, isPanelCollapsed
     useEffect(updateNotificationState, [updateNotificationState, allRoomsInHome]);
     useEventEmitter(RoomNotificationStateStore.instance, UPDATE_STATUS_INDICATOR, updateNotificationState);
 
+    const onHomeClick = (): void => {
+        SpaceStore.instance.setActiveSpace(MetaSpace.Home);
+        RightPanelStore.instance.hide(null);
+    };
+
     return (
         <MetaSpaceButton
             spaceKey={MetaSpace.Home}
@@ -159,11 +164,17 @@ const HomeButton: React.FC<MetaSpaceButtonProps> = ({ selected, isPanelCollapsed
             ContextMenuComponent={HomeButtonContextMenu}
             contextMenuTooltip={_t("common|options")}
             size="32px"
+            onClick={onHomeClick}
         />
     );
 };
 
 const FavouritesButton: React.FC<MetaSpaceButtonProps> = ({ selected, isPanelCollapsed }) => {
+    const onFavouritesClick = (): void => {
+        SpaceStore.instance.setActiveSpace(MetaSpace.Favourites);
+        RightPanelStore.instance.hide(null);
+    };
+
     return (
         <MetaSpaceButton
             spaceKey={MetaSpace.Favourites}
@@ -173,11 +184,17 @@ const FavouritesButton: React.FC<MetaSpaceButtonProps> = ({ selected, isPanelCol
             label={getMetaSpaceName(MetaSpace.Favourites)}
             notificationState={SpaceStore.instance.getNotificationState(MetaSpace.Favourites)}
             size="32px"
+            onClick={onFavouritesClick}
         />
     );
 };
 
 const PeopleButton: React.FC<MetaSpaceButtonProps> = ({ selected, isPanelCollapsed }) => {
+    const onPeopleClick = (): void => {
+        SpaceStore.instance.setActiveSpace(MetaSpace.People);
+        RightPanelStore.instance.hide(null);
+    };
+
     return (
         <MetaSpaceButton
             spaceKey={MetaSpace.People}
@@ -187,11 +204,17 @@ const PeopleButton: React.FC<MetaSpaceButtonProps> = ({ selected, isPanelCollaps
             label={getMetaSpaceName(MetaSpace.People)}
             notificationState={SpaceStore.instance.getNotificationState(MetaSpace.People)}
             size="32px"
+            onClick={onPeopleClick}
         />
     );
 };
 
 const OrphansButton: React.FC<MetaSpaceButtonProps> = ({ selected, isPanelCollapsed }) => {
+    const onOrphansClick = (): void => {
+        SpaceStore.instance.setActiveSpace(MetaSpace.Orphans);
+        RightPanelStore.instance.hide(null);
+    };
+
     return (
         <MetaSpaceButton
             spaceKey={MetaSpace.Orphans}
@@ -201,11 +224,17 @@ const OrphansButton: React.FC<MetaSpaceButtonProps> = ({ selected, isPanelCollap
             label={getMetaSpaceName(MetaSpace.Orphans)}
             notificationState={SpaceStore.instance.getNotificationState(MetaSpace.Orphans)}
             size="32px"
+            onClick={onOrphansClick}
         />
     );
 };
 
 const VideoRoomsButton: React.FC<MetaSpaceButtonProps> = ({ selected, isPanelCollapsed }) => {
+    const onVideoRoomsClick = (): void => {
+        SpaceStore.instance.setActiveSpace(MetaSpace.VideoRooms);
+        RightPanelStore.instance.hide(null);
+    };
+
     return (
         <MetaSpaceButton
             spaceKey={MetaSpace.VideoRooms}
@@ -215,6 +244,7 @@ const VideoRoomsButton: React.FC<MetaSpaceButtonProps> = ({ selected, isPanelCol
             label={getMetaSpaceName(MetaSpace.VideoRooms)}
             notificationState={SpaceStore.instance.getNotificationState(MetaSpace.VideoRooms)}
             size="32px"
+            onClick={onVideoRoomsClick}
         />
     );
 };

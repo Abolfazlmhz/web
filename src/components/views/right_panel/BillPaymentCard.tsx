@@ -239,7 +239,7 @@ const BillPaymentCard: React.FC<Props> = ({ onClose }) => {
     const billTypes = ["برق", "آب", "گاز", "تلفن ثابت"];
 
     return (
-        <div className="mx_BillPaymentCard">
+        <div className="mx_BillPaymentCard" style={{ height: "100%" }}>
             <div className="mx_BillPaymentCard_container">
                 <div className="mx_BillPaymentCard_header">
                     <div className="mx_BillPaymentCard_headerContent">

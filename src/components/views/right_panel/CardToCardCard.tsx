@@ -199,7 +199,7 @@ const CardToCardCard: React.FC<Props> = ({ onClose }) => {
     };
 
     return (
-        <div className="mx_CardToCardCard">
+        <div className="mx_CardToCardCard" style={{ height: "100%" }}>
             <div className="mx_CardToCardCard_container">
                 <div className="mx_CardToCardCard_header">
                     <div className="mx_CardToCardCard_headerContent">

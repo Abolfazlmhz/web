@@ -222,7 +222,7 @@ const ChargePurchaseCard: React.FC<Props> = ({ onClose }) => {
     ];
 
     return (
-        <div className="mx_ChargePurchaseCard">
+        <div className="mx_ChargePurchaseCard" style={{ height: "95%" }}>
             <div className="mx_ChargePurchaseCard_container">
                 <div className="mx_ChargePurchaseCard_header">
                     <div className="mx_ChargePurchaseCard_headerContent">

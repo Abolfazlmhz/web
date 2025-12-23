@@ -51,7 +51,6 @@ import IconizedContextMenu, {
 import SettingsStore from "../../../settings/SettingsStore";
 import { SettingLevel } from "../../../settings/SettingLevel";
 import UIStore from "../../../stores/UIStore";
-import QuickSettingsButton from "./QuickSettingsButton";
 import { useSettingValue } from "../../../hooks/useSettings";
 import UserMenu from "../../structures/UserMenu";
 import IndicatorScrollbar from "../../structures/IndicatorScrollbar";
@@ -62,9 +61,6 @@ import { Action } from "../../../dispatcher/actions";
 import { type NotificationState } from "../../../stores/notifications/NotificationState";
 import { KeyBindingAction } from "../../../accessibility/KeyboardShortcuts";
 import { getKeyBindingsManager } from "../../../KeyBindingsManager";
-import { shouldShowComponent } from "../../../customisations/helpers/UIComponents";
-import { UIComponent } from "../../../settings/UIFeature";
-import { ThreadsActivityCentre } from "./threads-activity-centre/";
 import AccessibleButton from "../elements/AccessibleButton";
 import { Landmark, LandmarkNavigation } from "../../../accessibility/LandmarkNavigation";
 import { KeyboardShortcut } from "../settings/KeyboardShortcut";
@@ -347,6 +343,56 @@ const BillPaymentButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed"
     );
 };
 
+const ServicesButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> = ({ isPanelCollapsed }) => {
+    const onServicesClick = (): void => {
+        RightPanelStore.instance.setCard({ phase: RightPanelPhases.Services }, true, undefined);
+    };
+
+    return (
+        <li
+            className={classNames("mx_SpaceItem", {
+                collapsed: isPanelCollapsed,
+            })}
+            role="treeitem"
+            aria-selected={false}
+        >
+            <SpaceButton
+                data-testid="services-button"
+                className="mx_SpaceButton_services"
+                label="خدمات"
+                onClick={onServicesClick}
+                isNarrow={isPanelCollapsed}
+                size="32px"
+            />
+        </li>
+    );
+};
+
+const AgricultureButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> = ({ isPanelCollapsed }) => {
+    const onAgricultureClick = (): void => {
+        RightPanelStore.instance.setCard({ phase: RightPanelPhases.Agriculture }, true, undefined);
+    };
+
+    return (
+        <li
+            className={classNames("mx_SpaceItem", {
+                collapsed: isPanelCollapsed,
+            })}
+            role="treeitem"
+            aria-selected={false}
+        >
+            <SpaceButton
+                data-testid="agriculture-button"
+                className="mx_SpaceButton_agriculture"
+                label="کشاورزی"
+                onClick={onAgricultureClick}
+                isNarrow={isPanelCollapsed}
+                size="32px"
+            />
+        </li>
+    );
+};
+
 const metaSpaceComponentMap: Record<MetaSpace, typeof HomeButton> = {
     [MetaSpace.Home]: HomeButton,
     [MetaSpace.Favourites]: FavouritesButton,
@@ -443,12 +489,14 @@ const InnerSpacePanel = React.memo<IInnerSpacePanelProps>(
                         />
                     </li>
                 ))}
-                {shouldShowComponent(UIComponent.CreateSpaces) && (
+                {/* {shouldShowComponent(UIComponent.CreateSpaces) && (
                     <CreateSpaceButton isPanelCollapsed={isPanelCollapsed} setPanelCollapsed={setPanelCollapsed} />
-                )}
-                <CardToCardButton isPanelCollapsed={isPanelCollapsed} />
+                )} */}
+                <ServicesButton isPanelCollapsed={isPanelCollapsed} />
+                <AgricultureButton isPanelCollapsed={isPanelCollapsed} />
+                {/* <CardToCardButton isPanelCollapsed={isPanelCollapsed} />
                 <ChargePurchaseButton isPanelCollapsed={isPanelCollapsed} />
-                <BillPaymentButton isPanelCollapsed={isPanelCollapsed} />
+                <BillPaymentButton isPanelCollapsed={isPanelCollapsed} /> */}
             </IndicatorScrollbar>
         );
     },
@@ -546,9 +594,9 @@ const SpacePanel: React.FC = () => {
                                 )}
                             </Droppable>
 
-                            <ThreadsActivityCentre displayButtonLabel={!isPanelCollapsed} />
+                            {/* <ThreadsActivityCentre displayButtonLabel={!isPanelCollapsed} /> */}
 
-                            <QuickSettingsButton isPanelCollapsed={isPanelCollapsed} />
+                            {/* <QuickSettingsButton isPanelCollapsed={isPanelCollapsed} /> */}
                         </nav>
                     </ReleaseAnnouncement>
                 </DragDropContext>

@@ -216,7 +216,7 @@ Please see LICENSE files in the repository root for full details.
         }
 
         &.mx_SpaceButton_home .mx_SpaceButton_icon::before {
-            mask-image: url("@vector-im/compound-design-tokens/icons/home-solid.svg");
+            mask-image: url("@vector-im/compound-design-tokens/icons/chat-solid.svg");
         }
 
         &.mx_SpaceButton_favourites .mx_SpaceButton_icon::before {
@@ -275,6 +275,28 @@ Please see LICENSE files in the repository root for full details.
             &::before {
                 background-color: $secondary-content;
                 mask-image: url("$(res)/img/element-icons/bill.svg");
+                mask-size: 18px;
+                mask-position: center;
+            }
+        }
+
+        &.mx_SpaceButton_services .mx_SpaceButton_icon {
+            background-color: $panel-actions;
+
+            &::before {
+                background-color: $secondary-content;
+                mask-image: url("$(res)/img/element-icons/services.svg");
+                mask-size: 18px;
+                mask-position: center;
+            }
+        }
+
+        &.mx_SpaceButton_agriculture .mx_SpaceButton_icon {
+            background-color: $panel-actions;
+
+            &::before {
+                background-color: $secondary-content;
+                mask-image: url("$(res)/img/element-icons/agriculture.svg");
                 mask-size: 18px;
                 mask-position: center;
             }

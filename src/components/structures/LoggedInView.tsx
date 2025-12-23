@@ -64,6 +64,8 @@ import RightPanel from "./RightPanel";
 import CardToCardCard from "../views/right_panel/CardToCardCard";
 import ChargePurchaseCard from "../views/right_panel/ChargePurchaseCard";
 import BillPaymentCard from "../views/right_panel/BillPaymentCard";
+import ServicesPage from "../views/services/ServicesPage";
+import AgriculturePage from "../views/agriculture/AgriculturePage";
 import { KeyBindingAction } from "../../accessibility/KeyboardShortcuts";
 import { type SwitchSpacePayload } from "../../dispatcher/payloads/SwitchSpacePayload";
 import LeftPanelLiveShareWarning from "../views/beacon/LeftPanelLiveShareWarning";
@@ -118,6 +120,8 @@ interface IState {
     backgroundImage?: string;
     showRightPanel: boolean;
     rightPanelPhase: RightPanelPhases | null;
+    isServicesOpen: boolean;
+    isAgricultureOpen: boolean;
 }
 
 const NEW_ROOM_LIST_MIN_WIDTH = 224;
@@ -157,6 +161,8 @@ class LoggedInView extends React.Component<IProps, IState> {
             activeCalls: LegacyCallHandler.instance.getAllActiveCalls(),
             showRightPanel: false,
             rightPanelPhase: null,
+            isServicesOpen: false,
+            isAgricultureOpen: false,
         };
 
         // stash the MatrixClient in case we log out before we are unmounted
@@ -711,9 +717,13 @@ class LoggedInView extends React.Component<IProps, IState> {
         const isCardToCard = currentCard.phase === RightPanelPhases.CardToCard;
         const isChargePurchase = currentCard.phase === RightPanelPhases.ChargePurchase;
         const isBillPayment = currentCard.phase === RightPanelPhases.BillPayment;
+        const isServices = currentCard.phase === RightPanelPhases.Services;
+        const isAgriculture = currentCard.phase === RightPanelPhases.Agriculture;
         this.setState({
             showRightPanel: (isCardToCard || isChargePurchase || isBillPayment) && RightPanelStore.instance.isOpen,
             rightPanelPhase: currentCard.phase,
+            isServicesOpen: isServices && RightPanelStore.instance.isOpen,
+            isAgricultureOpen: isAgriculture && RightPanelStore.instance.isOpen,
         });
     };
 
@@ -815,15 +825,23 @@ class LoggedInView extends React.Component<IProps, IState> {
                         </div>
                         {!moduleRenderer && <ResizeHandle passRef={this.resizeHandler} id="lp-resizer" />}
                         <div className="mx_RoomView_wrapper">
-                            {pageElement}
-                            {this.state.showRightPanel && this.state.rightPanelPhase === RightPanelPhases.CardToCard && (
-                                <CardToCardCard onClose={() => RightPanelStore.instance.togglePanel(null)} />
-                            )}
-                            {this.state.showRightPanel && this.state.rightPanelPhase === RightPanelPhases.ChargePurchase && (
-                                <ChargePurchaseCard onClose={() => RightPanelStore.instance.togglePanel(null)} />
-                            )}
-                            {this.state.showRightPanel && this.state.rightPanelPhase === RightPanelPhases.BillPayment && (
-                                <BillPaymentCard onClose={() => RightPanelStore.instance.togglePanel(null)} />
+                            {this.state.isServicesOpen ? (
+                                <ServicesPage />
+                            ) : this.state.isAgricultureOpen ? (
+                                <AgriculturePage />
+                            ) : (
+                                <>
+                                    {pageElement}
+                                    {this.state.showRightPanel && this.state.rightPanelPhase === RightPanelPhases.CardToCard && (
+                                        <CardToCardCard onClose={() => RightPanelStore.instance.togglePanel(null)} />
+                                    )}
+                                    {this.state.showRightPanel && this.state.rightPanelPhase === RightPanelPhases.ChargePurchase && (
+                                        <ChargePurchaseCard onClose={() => RightPanelStore.instance.togglePanel(null)} />
+                                    )}
+                                    {this.state.showRightPanel && this.state.rightPanelPhase === RightPanelPhases.BillPayment && (
+                                        <BillPaymentCard onClose={() => RightPanelStore.instance.togglePanel(null)} />
+                                    )}
+                                </>
                             )}
                         </div>
                     </div>

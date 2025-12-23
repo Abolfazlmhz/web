@@ -27,6 +27,8 @@ export enum RightPanelPhases {
     CardToCard = "CardToCard",
     ChargePurchase = "ChargePurchase",
     BillPayment = "BillPayment",
+    Services = "Services",
+    Agriculture = "Agriculture",
 
     // Thread stuff
     ThreadView = "ThreadView",

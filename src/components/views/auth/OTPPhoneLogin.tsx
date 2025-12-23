@@ -114,6 +114,7 @@ export default class OTPPhoneLogin extends React.Component<IProps, IState> {
                 <AccessibleButton
                     type="submit"
                     kind="primary"
+                    style={{ fontSize: "12px" }}
                     disabled={!phoneNumberValid || this.props.disableSubmit}
                     onClick={this.onSubmit}
                 >

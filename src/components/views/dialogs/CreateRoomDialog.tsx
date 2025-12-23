@@ -432,9 +432,9 @@ export default class CreateRoomDialog extends React.Component<IProps, IState> {
 
                         {publicPrivateLabel}
                         {visibilitySection}
-                        {e2eeSection}
+                        {/* {e2eeSection} */}
                         {aliasField}
-                        {this.advancedSettingsEnabled && (
+                        {/* {this.advancedSettingsEnabled && (
                             <details onToggle={this.onDetailsToggled} className="mx_CreateRoomDialog_details">
                                 <summary className="mx_CreateRoomDialog_details_summary">
                                     {this.state.detailsOpen ? _t("action|hide_advanced") : _t("action|show_advanced")}
@@ -448,7 +448,7 @@ export default class CreateRoomDialog extends React.Component<IProps, IState> {
                                 />
                                 <p>{federateLabel}</p>
                             </details>
-                        )}
+                        )} */}
                     </div>
                 </form>
                 <DialogButtons

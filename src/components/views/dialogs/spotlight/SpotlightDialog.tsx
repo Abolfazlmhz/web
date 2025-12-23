@@ -93,6 +93,41 @@ const MAX_RECENT_SEARCHES = 10;
 const SECTION_LIMIT = 50; // only show 50 results per section for performance reasons
 const AVATAR_SIZE = "24px";
 
+/**
+ * Extract phone number from Matrix user ID format: @u<phonenumber>:<domain>
+ * Returns just the phone number part (removes @, u prefix, and domain)
+ */
+function extractPhoneNumber(userId: string): string {
+    // Remove @ and split by : to get localpart
+    const localpart = userId.startsWith('@') ? userId.substring(1).split(':')[0] : userId.split(':')[0];
+
+    // Remove 'u' prefix if present to get just the phone number
+    if (localpart.startsWith('u')) {
+        return localpart.substring(1);
+    }
+
+    return localpart;
+}
+
+/**
+ * Transform invitation link for display purposes:
+ * - Replace "atrix" with "agridemo"
+ * - Show only phone number part of username
+ */
+function transformInviteLinkForDisplay(inviteLink: string, userId: string): string {
+    let displayLink = inviteLink;
+
+    // Replace "atrix" with "agridemo"
+    displayLink = displayLink.replace(/atrix/g, 'agridemo');
+
+    // Extract phone number from userId and replace the full userId in the link
+    const phoneNumber = extractPhoneNumber(userId);
+    const fullUserId = userId;
+    displayLink = displayLink.replace(fullUserId, phoneNumber);
+
+    return displayLink;
+}
+
 interface IProps {
     initialText?: string;
     initialFilter?: Filter;
@@ -312,6 +347,7 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
     const msc3946ProcessDynamicPredecessor = useFeatureEnabled("feature_dynamic_room_predecessors");
 
     const ownInviteLink = makeUserPermalink(cli.getUserId()!);
+    const ownInviteLinkDisplay = transformInviteLinkForDisplay(ownInviteLink, cli.getUserId()!);
     const [inviteLinkCopied, setInviteLinkCopied] = useState<boolean>(false);
     const trimmedQuery = useMemo(() => query.trim(), [query]);
 
@@ -679,7 +715,7 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
                             id={`mx_SpotlightDialog_button_result_${result.member.userId}_details`}
                             className="mx_SpotlightDialog_result_details"
                         >
-                            {result.member.userId}
+                            {extractPhoneNumber(result.member.userId)}
                         </div>
                     </Option>
                 );
@@ -889,8 +925,8 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
                                         url={
                                             room.avatar_url
                                                 ? mediaFromMxc(room.avatar_url).getSquareThumbnailHttp(
-                                                      parseInt(AVATAR_SIZE, 10),
-                                                  )
+                                                    parseInt(AVATAR_SIZE, 10),
+                                                )
                                                 : null
                                         }
                                         size={AVATAR_SIZE}
@@ -948,22 +984,27 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
                     <div className="mx_SpotlightDialog_otherSearches_messageSearchText">
                         {_t("spotlight_dialog|cant_find_person_helpful_hint")}
                     </div>
-                    <TooltipOption
-                        id="mx_SpotlightDialog_button_inviteLink"
-                        className="mx_SpotlightDialog_inviteLink"
-                        onClick={() => {
-                            setInviteLinkCopied(true);
-                            copyPlaintext(ownInviteLink);
-                        }}
-                        onTooltipOpenChange={(open) => {
-                            if (!open) setInviteLinkCopied(false);
-                        }}
-                        title={inviteLinkCopied ? _t("common|copied") : _t("action|copy")}
-                    >
-                        <span className="mx_AccessibleButton mx_AccessibleButton_hasKind mx_AccessibleButton_kind_primary_outline">
-                            {_t("spotlight_dialog|copy_link_text")}
-                        </span>
-                    </TooltipOption>
+                    <div className="mx_SpotlightDialog_inviteLinkContainer">
+                        <div className="mx_SpotlightDialog_inviteLinkDisplay">
+                            {ownInviteLinkDisplay}
+                        </div>
+                        <TooltipOption
+                            id="mx_SpotlightDialog_button_inviteLink"
+                            className="mx_SpotlightDialog_inviteLink"
+                            onClick={() => {
+                                setInviteLinkCopied(true);
+                                copyPlaintext(ownInviteLink);
+                            }}
+                            onTooltipOpenChange={(open) => {
+                                if (!open) setInviteLinkCopied(false);
+                            }}
+                            title={inviteLinkCopied ? _t("common|copied") : _t("action|copy")}
+                        >
+                            <span className="mx_AccessibleButton mx_AccessibleButton_hasKind mx_AccessibleButton_kind_primary_outline">
+                                {_t("spotlight_dialog|copy_link_text")}
+                            </span>
+                        </TooltipOption>
+                    </div>
                 </div>
             );
         } else if (trimmedQuery && (filter === Filter.PublicRooms || filter === Filter.PublicSpaces)) {

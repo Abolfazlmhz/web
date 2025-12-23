@@ -18,7 +18,16 @@ function getDisplayUserIdentifier(
     userId: string,
     { roomId, withDisplayName }: { roomId?: string; withDisplayName?: boolean },
 ): string | null {
-    return userId;
+    // Extract phone number from Matrix user ID format: @u<phonenumber>:<domain>
+    // Remove @ and split by : to get localpart
+    const localpart = userId.startsWith('@') ? userId.substring(1).split(':')[0] : userId.split(':')[0];
+
+    // Remove 'u' prefix if present to get just the phone number
+    if (localpart.startsWith('u')) {
+        return localpart.substring(1);
+    }
+
+    return localpart;
 }
 
 // A real customisation module will define and export one or more of the

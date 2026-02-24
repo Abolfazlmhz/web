@@ -30,7 +30,7 @@ const AgricultureCard: React.FC<AgricultureCardProps> = ({ title, icon: Icon, di
     return (
         <div className="mx_AgriculturePage_card" style={{ cursor: disabled ? 'not-allowed' : 'pointer' }} onClick={onClick}>
             <div className="mx_AgriculturePage_card_icon">
-                <Icon className="mx_AgriculturePage_card_icon_svg" style={{ opacity: disabled ? 0.5 : 1 }} />
+                <Icon className="mx_AgriculturePage_card_icon_svg" />
             </div>
             <div className="mx_AgriculturePage_card_content">
                 <h3 className="mx_AgriculturePage_card_title">{title}</h3>

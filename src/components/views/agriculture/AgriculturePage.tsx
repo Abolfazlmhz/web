@@ -56,6 +56,7 @@ const AgriculturePage: React.FC = () => {
                     <AgricultureCard
                         title="مشاور کشاورز"
                         icon={ConsultantIcon}
+                        onClick={() => handleMarketClick("@useller:agridemo.ir")}
                     />
                     <AgricultureCard
                         title="تعامل با سازمان ها"

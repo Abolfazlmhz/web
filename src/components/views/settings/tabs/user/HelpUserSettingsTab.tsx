@@ -256,6 +256,11 @@ export default class HelpUserSettingsTab extends React.Component<EmptyObject, IS
         return (
             <SettingsTab>
                 <SettingsSection>
+                    <SettingsSubsection heading={_t("setting|help_about|title")}>
+                        <SettingsSubsectionText>
+                            این برنامه متعلق به بانک کشاورزی می‌باشد
+                        </SettingsSubsectionText>
+                    </SettingsSubsection>
                     {bugReportingSection}
                     <SettingsSubsection heading={_t("common|faq")} description={faqText} />
                     <SettingsSubsection heading={_t("setting|help_about|versions")}>

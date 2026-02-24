@@ -125,6 +125,7 @@ export default function UserSettingsDialog(props: IProps): JSX.Element {
     const getTabs = (): NonEmptyArray<Tab<UserTab>> => {
         const tabs: Tab<UserTab>[] = [];
 
+        // Account tab
         tabs.push(
             new Tab(
                 UserTab.Account,
@@ -134,6 +135,8 @@ export default function UserSettingsDialog(props: IProps): JSX.Element {
                 "UserSettingsGeneral",
             ),
         );
+
+        // Session tab
         tabs.push(
             new Tab(
                 UserTab.SessionManager,
@@ -143,15 +146,8 @@ export default function UserSettingsDialog(props: IProps): JSX.Element {
                 undefined,
             ),
         );
-        tabs.push(
-            new Tab(
-                UserTab.Appearance,
-                _td("common|appearance"),
-                <VisibilityOnIcon />,
-                <AppearanceUserSettingsTab />,
-                "UserSettingsAppearance",
-            ),
-        );
+
+        // Notifications tab
         tabs.push(
             new Tab(
                 UserTab.Notifications,
@@ -161,15 +157,8 @@ export default function UserSettingsDialog(props: IProps): JSX.Element {
                 "UserSettingsNotifications",
             ),
         );
-        tabs.push(
-            new Tab(
-                UserTab.Preferences,
-                _td("common|preferences"),
-                <PreferencesIcon />,
-                <PreferencesUserSettingsTab closeSettingsFn={props.onFinished} />,
-                "UserSettingsPreferences",
-            ),
-        );
+
+        // Keyboard tab
         tabs.push(
             new Tab(
                 UserTab.Keyboard,
@@ -179,16 +168,8 @@ export default function UserSettingsDialog(props: IProps): JSX.Element {
                 "UserSettingsKeyboard",
             ),
         );
-        tabs.push(
-            new Tab(
-                UserTab.Sidebar,
-                _td("settings|sidebar|title"),
-                <SidebarIcon />,
-                <SidebarUserSettingsTab />,
-                "UserSettingsSidebar",
-            ),
-        );
 
+        // Voice (Audio and Video) tab
         if (voipEnabled) {
             tabs.push(
                 new Tab(
@@ -201,43 +182,7 @@ export default function UserSettingsDialog(props: IProps): JSX.Element {
             );
         }
 
-        tabs.push(
-            new Tab(
-                UserTab.Security,
-                _td("room_settings|security|title"),
-                <LockIcon />,
-                <SecurityUserSettingsTab closeSettingsFn={props.onFinished} />,
-                "UserSettingsSecurityPrivacy",
-            ),
-        );
-
-        tabs.push(
-            new Tab(
-                UserTab.Encryption,
-                _td("settings|encryption|title"),
-                <KeyIcon />,
-                <EncryptionUserSettingsTab initialState={initialEncryptionState} />,
-                "UserSettingsEncryption",
-                showSetupRecoveryIndicator ? "mx_SettingsDialog_tabLabelsAlert" : undefined,
-            ),
-        );
-
-        if (showLabsFlags() || SettingsStore.getFeatureSettingNames().some((k) => SettingsStore.getBetaInfo(k))) {
-            tabs.push(
-                new Tab(UserTab.Labs, _td("common|labs"), <LabsIcon />, <LabsUserSettingsTab />, "UserSettingsLabs"),
-            );
-        }
-        if (mjolnirEnabled) {
-            tabs.push(
-                new Tab(
-                    UserTab.Mjolnir,
-                    _td("labs_mjolnir|title"),
-                    <BlockIcon />,
-                    <MjolnirUserSettingsTab />,
-                    "UserSettingMjolnir",
-                ),
-            );
-        }
+        // Help (About) tab
         tabs.push(
             new Tab(
                 UserTab.Help,

@@ -58,24 +58,17 @@ interface IState {
  * Checks if the `LogoutDialog` should be shown instead of the simple logout flow.
  * The `LogoutDialog` will check the crypto recovery status of the account and
  * help the user setup recovery properly if needed.
+ *
+ * Modified to always return false for silent logout without E2E confirmation.
  */
 export async function shouldShowLogoutDialog(cli: MatrixClient): Promise<boolean> {
-    const crypto = cli?.getCrypto();
-    if (!crypto) return false;
-
-    // If any room is encrypted, we need to show the advanced logout flow
-    const allRooms = cli!.getRooms();
-    for (const room of allRooms) {
-        const isE2e = await crypto.isEncryptionEnabledInRoom(room.roomId);
-        if (isE2e) return true;
-    }
-
+    // Always return false to skip E2E confirmation dialog on logout
     return false;
 }
 
 export default class LogoutDialog extends React.Component<IProps, IState> {
     public static defaultProps = {
-        onFinished: function () {},
+        onFinished: function () { },
     };
 
     public constructor(props: IProps) {

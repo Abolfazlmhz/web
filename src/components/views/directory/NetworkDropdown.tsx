@@ -136,6 +136,8 @@ function useServers(): ServerList {
 
     const homeServer = MatrixClientPeg.safeGet().getDomain()!;
     const configServers = new Set<string>(SdkConfig.getObject("room_directory")?.get("servers") ?? []);
+    // Filter out matrix.org from config servers
+    configServers.delete("matrix.org");
     removeAll(configServers, homeServer);
     // configured servers take preference over user-defined ones, if one occurs in both ignore the latter one.
     const removableServers = new Set(userDefinedServers);
@@ -170,29 +172,30 @@ export const NetworkDropdown: React.FC<IProps> = ({ protocols, config, setConfig
         description:
             roomServer === homeServer ? _t("spotlight|public_rooms|network_dropdown_your_server_description") : null,
         options: [
-            {
-                key: { roomServer, instanceId: undefined },
-                label: _t("common|matrix"),
-            },
+            // Hide the Matrix option as requested
+            // {
+            //     key: { roomServer, instanceId: undefined },
+            //     label: _t("common|matrix"),
+            // },
             ...(roomServer === homeServer && protocols
                 ? Object.values(protocols)
-                      .flatMap((protocol) => protocol.instances)
-                      .map((instance) => ({
-                          key: { roomServer, instanceId: instance.instance_id },
-                          label: instance.desc,
-                      }))
+                    .flatMap((protocol) => protocol.instances)
+                    .map((instance) => ({
+                        key: { roomServer, instanceId: instance.instance_id },
+                        label: instance.desc,
+                    }))
                 : []),
         ],
         ...(userDefinedServers.includes(roomServer)
             ? {
-                  adornment: (
-                      <AccessibleButton
-                          className="mx_NetworkDropdown_removeServer"
-                          title={_t("spotlight|public_rooms|network_dropdown_remove_server_adornment", { roomServer })}
-                          onClick={() => setUserDefinedServers(without(userDefinedServers, roomServer))}
-                      />
-                  ),
-              }
+                adornment: (
+                    <AccessibleButton
+                        className="mx_NetworkDropdown_removeServer"
+                        title={_t("spotlight|public_rooms|network_dropdown_remove_server_adornment", { roomServer })}
+                        onClick={() => setUserDefinedServers(without(userDefinedServers, roomServer))}
+                    />
+                ),
+            }
             : {}),
     }));
 
@@ -253,9 +256,9 @@ export const NetworkDropdown: React.FC<IProps> = ({ protocols, config, setConfig
             selectedLabel={(option) =>
                 option?.key
                     ? _t("spotlight|public_rooms|network_dropdown_selected_label_instance", {
-                          server: option.key.roomServer,
-                          instance: option.key.instanceId ? option.label : "Matrix",
-                      })
+                        server: option.key.roomServer,
+                        instance: option.key.instanceId ? option.label : "",
+                    })
                     : _t("spotlight|public_rooms|network_dropdown_selected_label")
             }
             AdditionalOptions={addNewServer}

@@ -257,7 +257,7 @@ function RoomHeaderButtons({
                 joinCallButton
             ) : (
                 <>
-                    {!isVideoRoom && videoCallButton}
+                    {/* {!isVideoRoom && videoCallButton} */}
                     {!useElementCallExclusively && !isVideoRoom && voiceCallButton}
                 </>
             )}

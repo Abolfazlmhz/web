@@ -65,6 +65,41 @@ import { SdkContextClass } from "../../../contexts/SDKContext";
 import { type UserProfilesStore } from "../../../stores/UserProfilesStore";
 import InviteProgressBody from "./InviteProgressBody.tsx";
 
+/**
+ * Extract phone number from Matrix user ID format: @u<phonenumber>:<domain>
+ * Returns just the phone number part (removes @, u prefix, and domain)
+ */
+function extractPhoneNumber(userId: string): string {
+    // Remove @ and split by : to get localpart
+    const localpart = userId.startsWith('@') ? userId.substring(1).split(':')[0] : userId.split(':')[0];
+
+    // Remove 'u' prefix if present to get just the phone number
+    if (localpart.startsWith('u')) {
+        return localpart.substring(1);
+    }
+
+    return localpart;
+}
+
+/**
+ * Transform invitation link for display purposes:
+ * - Replace "atrix" with "agridemo"
+ * - Show only phone number part of username
+ */
+function transformInviteLinkForDisplay(inviteLink: string, userId: string): string {
+    let displayLink = inviteLink;
+
+    // Replace "atrix" with "agridemo"
+    displayLink = displayLink.replace(/matrix/g, 'agridemo');
+
+    // Extract phone number from userId and replace the full userId in the link
+    const phoneNumber = extractPhoneNumber(userId);
+    const fullUserId = userId;
+    displayLink = displayLink.replace(fullUserId, phoneNumber);
+
+    return displayLink;
+}
+
 // we have a number of types defined from the Matrix spec which can't reasonably be altered here.
 /* eslint-disable camelcase */
 
@@ -134,10 +169,10 @@ class DMUserTile extends React.PureComponent<IDMUserTileProps> {
 const toMember = (member: RoomMember | Member): Member => {
     return member instanceof RoomMember
         ? new DirectoryMember({
-              user_id: member.userId,
-              display_name: member.name,
-              avatar_url: member.getMxcAvatarUrl(),
-          })
+            user_id: member.userId,
+            display_name: member.name,
+            avatar_url: member.getMxcAvatarUrl(),
+        })
         : member;
 };
 
@@ -166,8 +201,8 @@ class DMRoomTile extends React.PureComponent<IDMRoomTileProps> {
                 url={
                     this.props.member.getMxcAvatarUrl()
                         ? mediaFromMxc(this.props.member.getMxcAvatarUrl()!).getSquareThumbnailHttp(
-                              parseInt(avatarSize, 10),
-                          )
+                            parseInt(avatarSize, 10),
+                        )
                         : null
                 }
                 name={this.props.member.name}
@@ -1185,13 +1220,14 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
         // If we're starting a DM, add a footer which showing our matrix.to link, for copying & pasting.
         let footer;
         if (this.props.kind === InviteKind.Dm) {
-            const link = makeUserPermalink(MatrixClientPeg.safeGet().getSafeUserId());
+            const actualLink = makeUserPermalink(MatrixClientPeg.safeGet().getSafeUserId());
+            const displayLink = transformInviteLinkForDisplay(actualLink, MatrixClientPeg.safeGet().getSafeUserId());
             footer = (
                 <div className="mx_InviteDialog_footer">
                     <h3>{_t("invite|send_link_prompt")}</h3>
                     <CopyableText getTextToCopy={() => makeUserPermalink(MatrixClientPeg.safeGet().getSafeUserId())}>
-                        <a className="mx_InviteDialog_footer_link" href={link} onClick={this.onLinkClick}>
-                            {link}
+                        <a className="mx_InviteDialog_footer_link" href={actualLink} onClick={this.onLinkClick}>
+                            {displayLink}
                         </a>
                     </CopyableText>
                 </div>
@@ -1259,7 +1295,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
                         userId: () => {
                             return (
                                 <a href={makeUserPermalink(userId)} rel="noreferrer noopener" target="_blank">
-                                    {userId}
+                                    {extractPhoneNumber(userId)}
                                 </a>
                             );
                         },
@@ -1273,7 +1309,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
                         userId: () => {
                             return (
                                 <a href={makeUserPermalink(userId)} rel="noreferrer noopener" target="_blank">
-                                    {userId}
+                                    {extractPhoneNumber(userId)}
                                 </a>
                             );
                         },
@@ -1368,11 +1404,11 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             const isSpace = room?.isSpaceRoom();
             title = isSpace
                 ? _t("invite|to_space", {
-                      spaceName: room?.name || _t("common|unnamed_space"),
-                  })
+                    spaceName: room?.name || _t("common|unnamed_space"),
+                })
                 : _t("invite|to_room", {
-                      roomName: room?.name || _t("common|unnamed_room"),
-                  });
+                    roomName: room?.name || _t("common|unnamed_room"),
+                });
         }
 
         return (

@@ -69,6 +69,7 @@ import { useModuleSpacePanelItems } from "../../../modules/ExtrasApi.ts";
 import { ReleaseAnnouncement } from "../../structures/ReleaseAnnouncement";
 import RightPanelStore from "../../../stores/right-panel/RightPanelStore";
 import { RightPanelPhases } from "../../../stores/right-panel/RightPanelStorePhases";
+import { UPDATE_EVENT } from "../../../stores/AsyncStore";
 
 const useSpaces = (): [Room[], MetaSpace[], Room[], SpaceKey] => {
     const invites = useEventEmitterState<Room[]>(SpaceStore.instance, UPDATE_INVITED_SPACES, () => {
@@ -299,6 +300,9 @@ const CreateSpaceButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed"
 };
 
 const CardToCardButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> = ({ isPanelCollapsed }) => {
+    const currentCard = useEventEmitterState(RightPanelStore.instance, UPDATE_EVENT, () => RightPanelStore.instance.currentCard);
+    const isSelected = currentCard.phase === RightPanelPhases.CardToCard && RightPanelStore.instance.isOpen;
+
     const onCardToCardClick = (): void => {
         RightPanelStore.instance.setCard({ phase: RightPanelPhases.CardToCard }, true, undefined);
     };
@@ -309,7 +313,7 @@ const CardToCardButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">
                 collapsed: isPanelCollapsed,
             })}
             role="treeitem"
-            aria-selected={false}
+            aria-selected={isSelected}
         >
             <SpaceButton
                 data-testid="card-to-card-button"
@@ -317,6 +321,7 @@ const CardToCardButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">
                 label="کارت به کارت"
                 onClick={onCardToCardClick}
                 isNarrow={isPanelCollapsed}
+                selected={isSelected}
                 size="32px"
             />
         </li>
@@ -324,6 +329,9 @@ const CardToCardButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">
 };
 
 const ChargePurchaseButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> = ({ isPanelCollapsed }) => {
+    const currentCard = useEventEmitterState(RightPanelStore.instance, UPDATE_EVENT, () => RightPanelStore.instance.currentCard);
+    const isSelected = currentCard.phase === RightPanelPhases.ChargePurchase && RightPanelStore.instance.isOpen;
+
     const onChargePurchaseClick = (): void => {
         RightPanelStore.instance.setCard({ phase: RightPanelPhases.ChargePurchase }, true, undefined);
     };
@@ -334,7 +342,7 @@ const ChargePurchaseButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollaps
                 collapsed: isPanelCollapsed,
             })}
             role="treeitem"
-            aria-selected={false}
+            aria-selected={isSelected}
         >
             <SpaceButton
                 data-testid="charge-purchase-button"
@@ -342,6 +350,7 @@ const ChargePurchaseButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollaps
                 label="خرید شارژ"
                 onClick={onChargePurchaseClick}
                 isNarrow={isPanelCollapsed}
+                selected={isSelected}
                 size="32px"
             />
         </li>
@@ -349,6 +358,9 @@ const ChargePurchaseButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollaps
 };
 
 const BillPaymentButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> = ({ isPanelCollapsed }) => {
+    const currentCard = useEventEmitterState(RightPanelStore.instance, UPDATE_EVENT, () => RightPanelStore.instance.currentCard);
+    const isSelected = currentCard.phase === RightPanelPhases.BillPayment && RightPanelStore.instance.isOpen;
+
     const onBillPaymentClick = (): void => {
         RightPanelStore.instance.setCard({ phase: RightPanelPhases.BillPayment }, true, undefined);
     };
@@ -359,7 +371,7 @@ const BillPaymentButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed"
                 collapsed: isPanelCollapsed,
             })}
             role="treeitem"
-            aria-selected={false}
+            aria-selected={isSelected}
         >
             <SpaceButton
                 data-testid="bill-payment-button"
@@ -367,6 +379,7 @@ const BillPaymentButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed"
                 label="پرداخت قبض"
                 onClick={onBillPaymentClick}
                 isNarrow={isPanelCollapsed}
+                selected={isSelected}
                 size="32px"
             />
         </li>
@@ -374,6 +387,9 @@ const BillPaymentButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed"
 };
 
 const ServicesButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> = ({ isPanelCollapsed }) => {
+    const currentCard = useEventEmitterState(RightPanelStore.instance, UPDATE_EVENT, () => RightPanelStore.instance.currentCard);
+    const isSelected = currentCard.phase === RightPanelPhases.Services && RightPanelStore.instance.isOpen;
+
     const onServicesClick = (): void => {
         RightPanelStore.instance.setCard({ phase: RightPanelPhases.Services }, true, undefined);
     };
@@ -384,7 +400,7 @@ const ServicesButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> 
                 collapsed: isPanelCollapsed,
             })}
             role="treeitem"
-            aria-selected={false}
+            aria-selected={isSelected}
         >
             <SpaceButton
                 data-testid="services-button"
@@ -392,6 +408,7 @@ const ServicesButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> 
                 label="خدمات"
                 onClick={onServicesClick}
                 isNarrow={isPanelCollapsed}
+                selected={isSelected}
                 size="32px"
             />
         </li>
@@ -399,6 +416,9 @@ const ServicesButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> 
 };
 
 const AgricultureButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> = ({ isPanelCollapsed }) => {
+    const currentCard = useEventEmitterState(RightPanelStore.instance, UPDATE_EVENT, () => RightPanelStore.instance.currentCard);
+    const isSelected = currentCard.phase === RightPanelPhases.Agriculture && RightPanelStore.instance.isOpen;
+
     const onAgricultureClick = (): void => {
         RightPanelStore.instance.setCard({ phase: RightPanelPhases.Agriculture }, true, undefined);
     };
@@ -409,7 +429,7 @@ const AgricultureButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed"
                 collapsed: isPanelCollapsed,
             })}
             role="treeitem"
-            aria-selected={false}
+            aria-selected={isSelected}
         >
             <SpaceButton
                 data-testid="agriculture-button"
@@ -417,6 +437,7 @@ const AgricultureButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed"
                 label="کشاورزی"
                 onClick={onAgricultureClick}
                 isNarrow={isPanelCollapsed}
+                selected={isSelected}
                 size="32px"
             />
         </li>
@@ -439,11 +460,22 @@ interface IInnerSpacePanelProps extends DroppableProvidedProps {
     innerRef: RefCallback<HTMLElement>;
 }
 
+const CUSTOM_PHASES = [
+    RightPanelPhases.Services,
+    RightPanelPhases.Agriculture,
+    RightPanelPhases.CardToCard,
+    RightPanelPhases.ChargePurchase,
+    RightPanelPhases.BillPayment,
+];
+
 // Optimisation based on https://github.com/atlassian/react-beautiful-dnd/blob/master/docs/api/droppable.md#recommended-droppable--performance-optimisation
 const InnerSpacePanel = React.memo<IInnerSpacePanelProps>(
     ({ children, isPanelCollapsed, setPanelCollapsed, isDraggingOver, innerRef, ...props }) => {
         const [invites, metaSpaces, actualSpaces, activeSpace] = useSpaces();
         const activeSpaces = activeSpace ? [activeSpace] : [];
+
+        const currentCard = useEventEmitterState(RightPanelStore.instance, UPDATE_EVENT, () => RightPanelStore.instance.currentCard);
+        const isCustomPanelOpen = RightPanelStore.instance.isOpen && CUSTOM_PHASES.includes(currentCard.phase as RightPanelPhases);
 
         const moduleSpaceItems = useModuleSpacePanelItems(ModuleApi.instance.extras);
 
@@ -451,7 +483,7 @@ const InnerSpacePanel = React.memo<IInnerSpacePanelProps>(
             .filter((key) => !(key === MetaSpace.VideoRooms && !SettingsStore.getValue("feature_video_rooms")))
             .map((key) => {
                 const Component = metaSpaceComponentMap[key];
-                return <Component key={key} selected={activeSpace === key} isPanelCollapsed={isPanelCollapsed} />;
+                return <Component key={key} selected={!isCustomPanelOpen && activeSpace === key} isPanelCollapsed={isPanelCollapsed} />;
             });
 
         return (

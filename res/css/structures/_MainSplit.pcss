@@ -30,3 +30,15 @@ Please see LICENSE files in the repository root for full details.
         opacity: 0.8;
     }
 }
+
+/* Mobile responsive layout */
+@media only screen and (max-width: 768px) {
+    .mx_MainSplit {
+        flex-direction: column;
+    }
+
+    .mx_MainSplit > .mx_RightPanel_ResizeWrapper {
+        width: 100% !important;
+        max-width: 100%;
+    }
+}

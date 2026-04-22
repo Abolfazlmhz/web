@@ -214,6 +214,21 @@ Please see LICENSE files in the repository root for full details.
     .mx_RoomView_wrapper {
         min-width: 0;
         flex: 1;
+        /* Relax strict containment on mobile to allow proper sizing */
+        contain: layout style;
+    }
+
+    .mx_RoomView_body .mx_RoomView_timeline {
+        margin-right: 0;
+    }
+
+    .mx_RoomView_MessageList {
+        padding: 12px;
+    }
+
+    .mx_RoomView_empty {
+        margin-right: 0;
+        padding: 0 12px;
     }
 }
 
@@ -224,5 +239,14 @@ Please see LICENSE files in the repository root for full details.
 
     .mx_RoomView .mx_MessageComposer {
         padding-bottom: 0.5em;
+        margin-right: 0;
+    }
+
+    .mx_RoomView_MessageList {
+        padding: 8px;
+    }
+
+    .mx_RoomView_statusAreaBox_line {
+        margin-left: 12px;
     }
 }

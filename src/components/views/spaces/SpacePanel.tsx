@@ -318,7 +318,7 @@ const CardToCardButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">
             <SpaceButton
                 data-testid="card-to-card-button"
                 className="mx_SpaceButton_cardToCard"
-                label="کارت به کارت"
+                label={_t("custom_panels|card_to_card")}
                 onClick={onCardToCardClick}
                 isNarrow={isPanelCollapsed}
                 selected={isSelected}
@@ -347,7 +347,7 @@ const ChargePurchaseButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollaps
             <SpaceButton
                 data-testid="charge-purchase-button"
                 className="mx_SpaceButton_chargePurchase"
-                label="خرید شارژ"
+                label={_t("custom_panels|charge_purchase")}
                 onClick={onChargePurchaseClick}
                 isNarrow={isPanelCollapsed}
                 selected={isSelected}
@@ -376,7 +376,7 @@ const BillPaymentButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed"
             <SpaceButton
                 data-testid="bill-payment-button"
                 className="mx_SpaceButton_billPayment"
-                label="پرداخت قبض"
+                label={_t("custom_panels|bill_payment")}
                 onClick={onBillPaymentClick}
                 isNarrow={isPanelCollapsed}
                 selected={isSelected}
@@ -405,7 +405,7 @@ const ServicesButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> 
             <SpaceButton
                 data-testid="services-button"
                 className="mx_SpaceButton_services"
-                label="خدمات"
+                label={_t("custom_panels|services")}
                 onClick={onServicesClick}
                 isNarrow={isPanelCollapsed}
                 selected={isSelected}
@@ -434,7 +434,7 @@ const AgricultureButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed"
             <SpaceButton
                 data-testid="agriculture-button"
                 className="mx_SpaceButton_agriculture"
-                label="کشاورزی"
+                label={_t("custom_panels|agriculture")}
                 onClick={onAgricultureClick}
                 isNarrow={isPanelCollapsed}
                 selected={isSelected}

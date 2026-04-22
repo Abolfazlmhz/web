@@ -208,3 +208,21 @@ Please see LICENSE files in the repository root for full details.
         min-height: 42px;
     }
 }
+
+/* Mobile responsive layout */
+@media only screen and (max-width: 768px) {
+    .mx_RoomView_wrapper {
+        min-width: 0;
+        flex: 1;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .mx_RoomView_wrapper {
+        min-width: 0;
+    }
+
+    .mx_RoomView .mx_MessageComposer {
+        padding-bottom: 0.5em;
+    }
+}

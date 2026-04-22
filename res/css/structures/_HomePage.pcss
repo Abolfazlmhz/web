@@ -97,3 +97,76 @@ Please see LICENSE files in the repository root for full details.
         }
     }
 }
+
+/* Mobile responsive layout */
+@media only screen and (max-width: 768px) {
+    .mx_HomePage_default {
+        .mx_HomePage_default_buttons {
+            flex-direction: column;
+            align-items: center;
+
+            .mx_AccessibleButton {
+                width: 80%;
+                max-width: 280px;
+                margin: 8px auto;
+            }
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        h2 {
+            font-size: 16px;
+        }
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .mx_HomePage {
+        max-width: 100%;
+        padding: 0 8px;
+        box-sizing: border-box;
+    }
+
+    .mx_HomePage_default {
+        .mx_HomePage_default_wrapper {
+            padding: 0 4px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .mx_HomePage_default_buttons {
+            margin-top: 24px;
+            width: 100%;
+
+            .mx_AccessibleButton {
+                width: 100%;
+                max-width: 100%;
+                min-height: 80px;
+                padding: 48px 8px 10px;
+                margin: 6px 0;
+                font-size: 13px;
+
+                &::before {
+                    left: calc(50% - 16px);
+                    width: 32px;
+                    height: 32px;
+                    top: 12px;
+                }
+            }
+        }
+
+        h1 {
+            font-size: 20px;
+        }
+
+        h2 {
+            font-size: 14px;
+        }
+
+        img {
+            height: 36px;
+        }
+    }
+}

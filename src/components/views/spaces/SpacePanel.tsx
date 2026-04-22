@@ -152,6 +152,8 @@ const HomeButton: React.FC<MetaSpaceButtonProps> = ({ selected, isPanelCollapsed
     const onHomeClick = (): void => {
         SpaceStore.instance.setActiveSpace(MetaSpace.Home);
         RightPanelStore.instance.hide(null);
+        // On mobile, show the room list when Home is clicked
+        defaultDispatcher.dispatch({ action: "show_left_panel" });
     };
 
     return (
@@ -392,6 +394,7 @@ const ServicesButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> 
 
     const onServicesClick = (): void => {
         RightPanelStore.instance.setCard({ phase: RightPanelPhases.Services }, true, undefined);
+        defaultDispatcher.dispatch({ action: "hide_left_panel" });
     };
 
     return (
@@ -421,6 +424,7 @@ const AgricultureButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed"
 
     const onAgricultureClick = (): void => {
         RightPanelStore.instance.setCard({ phase: RightPanelPhases.Agriculture }, true, undefined);
+        defaultDispatcher.dispatch({ action: "hide_left_panel" });
     };
 
     return (
@@ -459,6 +463,58 @@ interface IInnerSpacePanelProps extends DroppableProvidedProps {
     isDraggingOver: boolean;
     innerRef: RefCallback<HTMLElement>;
 }
+
+const ToggleRoomListButton: React.FC<{ isPanelCollapsed: boolean }> = ({ isPanelCollapsed }) => {
+    const [isRoomListVisible, setRoomListVisible] = useState(() => window.innerWidth > 768);
+    const visibleRef = useRef(window.innerWidth > 768);
+
+    const applyVisibility = useCallback((visible: boolean) => {
+        visibleRef.current = visible;
+        setRoomListVisible(visible);
+        const el = document.querySelector(".mx_LeftPanel_wrapper--user") as HTMLElement | null;
+        if (el) {
+            if (visible) {
+                el.classList.remove("mx_LeftPanel_hidden");
+            } else {
+                el.classList.add("mx_LeftPanel_hidden");
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        const onResize = (): void => {
+            const isMobile = window.innerWidth <= 768;
+            if (isMobile) {
+                applyVisibility(false);
+            } else {
+                applyVisibility(true);
+            }
+        };
+        window.addEventListener("resize", onResize);
+        setTimeout(onResize, 300);
+        return () => window.removeEventListener("resize", onResize);
+    }, [applyVisibility]);
+
+    const toggle = useCallback(() => {
+        applyVisibility(!visibleRef.current);
+    }, [applyVisibility]);
+
+    return (
+        <div
+            className={classNames("mx_SpacePanel_toggleRoomListWrapper", {
+                collapsed: isPanelCollapsed,
+            })}
+        >
+            <AccessibleButton
+                className={classNames("mx_SpacePanel_toggleRoomListBtn", {
+                    mx_SpacePanel_toggleRoomListBtn_active: isRoomListVisible,
+                })}
+                onClick={toggle}
+                title={isRoomListVisible ? _t("action|collapse") : _t("action|expand")}
+            />
+        </div>
+    );
+};
 
 const CUSTOM_PHASES = [
     RightPanelPhases.Services,
@@ -627,6 +683,7 @@ const SpacePanel: React.FC = () => {
                             ref={ref}
                             aria-label={_t("common|spaces")}
                         >
+                            <ToggleRoomListButton isPanelCollapsed={isPanelCollapsed} />
                             <UserMenu isPanelCollapsed={isPanelCollapsed}>
                                 <AccessibleButton
                                     className={classNames("mx_SpacePanel_toggleCollapse", {

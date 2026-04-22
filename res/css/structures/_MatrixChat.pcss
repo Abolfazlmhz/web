@@ -68,3 +68,29 @@ Please see LICENSE files in the repository root for full details.
         opacity: 0.8;
     }
 }
+
+/* Mobile responsive layout */
+@media only screen and (max-width: 768px) {
+    .mx_MatrixChat {
+        /* Keep row direction — SpacePanel stays as narrow left strip,
+           LeftPanel + MainContent share remaining space */
+        flex-direction: row;
+    }
+
+    .mx_MatrixChat > .mx_ResizeHandle--horizontal {
+        display: none;
+    }
+
+    /* When viewing a room or custom page, hide the room list and show only main content */
+    .mx_MatrixChat > .mx_LeftPanel_outerWrapper {
+        /* On mobile the left panel outer wrapper should not take more than needed */
+        max-width: none;
+        flex-shrink: 0;
+    }
+
+    /* Main content area fills remaining space */
+    .mx_MatrixChat > .mx_RoomView_wrapper {
+        flex: 1;
+        min-width: 0;
+    }
+}

@@ -18,6 +18,7 @@ import { Icon as BazaarIcon } from "../../../../res/img/element-icons/agricultur
 import "../../../../res/css/views/agriculture/AgriculturePage.pcss";
 import MatrixClientContext from "../../../contexts/MatrixClientContext";
 import { DirectoryMember, startDmOnFirstMessage } from "../../../utils/direct-messages";
+import { _t } from "../../../languageHandler";
 
 interface AgricultureCardProps {
     title: string;
@@ -28,12 +29,22 @@ interface AgricultureCardProps {
 
 const AgricultureCard: React.FC<AgricultureCardProps> = ({ title, icon: Icon, disabled = false, onClick }) => {
     return (
-        <div className="mx_AgriculturePage_card" style={{ cursor: disabled ? 'not-allowed' : 'pointer' }} onClick={onClick}>
+        <div
+            className={`mx_AgriculturePage_card ${disabled ? "mx_AgriculturePage_card_disabled" : ""}`}
+            onClick={disabled ? undefined : onClick}
+            role={disabled ? undefined : "button"}
+            tabIndex={disabled ? undefined : 0}
+        >
             <div className="mx_AgriculturePage_card_icon">
                 <Icon className="mx_AgriculturePage_card_icon_svg" />
             </div>
             <div className="mx_AgriculturePage_card_content">
                 <h3 className="mx_AgriculturePage_card_title">{title}</h3>
+                {disabled && (
+                    <span className="mx_AgriculturePage_card_badge">
+                        {_t("custom_panels|coming_soon")}
+                    </span>
+                )}
             </div>
         </div>
     );
@@ -54,42 +65,42 @@ const AgriculturePage: React.FC = () => {
             <div className="mx_AgriculturePage_container">
                 <div className="mx_AgriculturePage_grid">
                     <AgricultureCard
-                        title="مشاور کشاورز"
+                        title={_t("custom_panels|agriculture_consultant")}
                         icon={ConsultantIcon}
                         onClick={() => handleMarketClick("@useller:agridemo.ir")}
                     />
                     <AgricultureCard
-                        title="تعامل با سازمان ها"
+                        title={_t("custom_panels|agriculture_organizations")}
                         icon={OrganizationIcon}
                         disabled={true}
                     />
                     <AgricultureCard
-                        title="بازارگاه"
+                        title={_t("custom_panels|agriculture_market")}
                         icon={MarketIcon}
                         onClick={() => handleMarketClick("@advertisebot:agridemo.ir")}
                     />
                     <AgricultureCard
-                        title="آموزش و مشاوره تخصصی"
+                        title={_t("custom_panels|agriculture_education")}
                         icon={EducationIcon}
                         disabled={true}
                     />
                     <AgricultureCard
-                        title="شرایط اقلیمی"
+                        title={_t("custom_panels|agriculture_climate")}
                         icon={ClimateIcon}
                         disabled={true}
                     />
                     <AgricultureCard
-                        title="باشگاه کشاورزان"
+                        title={_t("custom_panels|agriculture_club")}
                         icon={ClubIcon}
                         disabled={true}
                     />
                     <AgricultureCard
-                        title="بیمه کشاورزی"
+                        title={_t("custom_panels|agriculture_insurance")}
                         icon={InsuranceIcon}
                         disabled={true}
                     />
                     <AgricultureCard
-                        title="بازارچه"
+                        title={_t("custom_panels|agriculture_bazaar")}
                         icon={BazaarIcon}
                         disabled={true}
                     />
@@ -100,4 +111,3 @@ const AgriculturePage: React.FC = () => {
 };
 
 export default AgriculturePage;
-

@@ -272,17 +272,17 @@ const RoomSummaryCardView: React.FC<IProps> = ({
                         />
                         <MenuItem
                             Icon={LinkIcon}
-                            label="کارت به کارت"
+                            label={_t("custom_panels|card_to_card")}
                             onSelect={vm.onCardToCardClick}
                         />
                         <MenuItem
                             Icon={ChargeIcon}
-                            label="خرید شارژ"
+                            label={_t("custom_panels|charge_purchase")}
                             onSelect={vm.onChargePurchaseClick}
                         />
                         <MenuItem
                             Icon={BillIcon}
-                            label="پرداخت قبض"
+                            label={_t("custom_panels|bill_payment")}
                             onSelect={vm.onBillPaymentClick}
                         />
                     </>

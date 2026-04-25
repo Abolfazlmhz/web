@@ -231,6 +231,15 @@ class LoggedInView extends React.Component<IProps, IState> {
         if (nextProps.page_type !== this.props.page_type) {
             this.loadResizer();
         }
+
+        // Reload resizer when returning from a non-chat section (Services/Agriculture)
+        // because the LeftPanel wrapper was unmounted and the resizer lost its DOM references
+        const wasNonChat = nextState.isServicesOpen || nextState.isAgricultureOpen;
+        const isNonChat = this.state.isServicesOpen || this.state.isAgricultureOpen;
+        if (wasNonChat && !isNonChat) {
+            // Use setTimeout to ensure the DOM has re-rendered before rebinding
+            setTimeout(() => this.loadResizer(), 0);
+        }
     }
 
     private onTimezoneUpdate = async (): Promise<void> => {
@@ -790,6 +799,7 @@ class LoggedInView extends React.Component<IProps, IState> {
         });
 
         const shouldUseMinimizedUI = !useNewRoomList && this.props.collapseLhs;
+        const isNonChatSectionOpen = this.state.isServicesOpen || this.state.isAgricultureOpen;
         return (
             <MatrixClientContextProvider client={this._matrixClient}>
                 <div
@@ -808,7 +818,7 @@ class LoggedInView extends React.Component<IProps, IState> {
                                 )}
                                 <SpacePanel />
                                 {!useNewRoomList && <BackdropPanel backgroundImage={this.state.backgroundImage} />}
-                                {!moduleRenderer && (
+                                {!moduleRenderer && !isNonChatSectionOpen && (
                                     <div
                                         className="mx_LeftPanel_wrapper--user"
                                         ref={this._resizeContainer}
@@ -823,7 +833,9 @@ class LoggedInView extends React.Component<IProps, IState> {
                                 )}
                             </div>
                         </div>
-                        {!moduleRenderer && <ResizeHandle passRef={this.resizeHandler} id="lp-resizer" />}
+                        {!moduleRenderer && !isNonChatSectionOpen && (
+                            <ResizeHandle passRef={this.resizeHandler} id="lp-resizer" />
+                        )}
                         <div className="mx_RoomView_wrapper">
                             {this.state.isServicesOpen ? (
                                 <ServicesPage />

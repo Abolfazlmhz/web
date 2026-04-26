@@ -24,9 +24,6 @@ import MatrixClientContext, { useMatrixClientContext } from "../../contexts/Matr
 import MiniAvatarUploader, { AVATAR_SIZE } from "../views/elements/MiniAvatarUploader";
 import PosthogTrackers from "../../PosthogTrackers";
 import EmbeddedPage from "./EmbeddedPage";
-import RightPanelStore from "../../stores/right-panel/RightPanelStore";
-import { RightPanelPhases } from "../../stores/right-panel/RightPanelStorePhases";
-import { useEventEmitterState } from "../../hooks/useEventEmitter";
 
 const onClickSendDm = (ev: ButtonEvent): void => {
     PosthogTrackers.trackInteraction("WebHomeCreateChatButton", ev);
@@ -94,15 +91,6 @@ const HomePage: React.FC<IProps> = ({ justRegistered = false }) => {
     const config = SdkConfig.get();
     const pageUrl = getHomePageUrl(config, cli);
 
-    const currentCard = useEventEmitterState(
-        RightPanelStore.instance,
-        UPDATE_EVENT,
-        () => RightPanelStore.instance.currentCard,
-    );
-    const isCardToCardOpen = currentCard.phase === RightPanelPhases.CardToCard && RightPanelStore.instance.isOpen;
-    const isChargePurchaseOpen = currentCard.phase === RightPanelPhases.ChargePurchase && RightPanelStore.instance.isOpen;
-    const isBillPaymentOpen = currentCard.phase === RightPanelPhases.BillPayment && RightPanelStore.instance.isOpen;
-
     if (pageUrl) {
         return <EmbeddedPage className="mx_HomePage" url={pageUrl} scrollbar={true} />;
     }
@@ -125,22 +113,20 @@ const HomePage: React.FC<IProps> = ({ justRegistered = false }) => {
 
     return (
         <AutoHideScrollbar className="mx_HomePage mx_HomePage_default" element="main">
-            {!isCardToCardOpen && !isChargePurchaseOpen && !isBillPaymentOpen && (
-                <div className="mx_HomePage_default_wrapper">
-                    {introSection}
-                    <div className="mx_HomePage_default_buttons">
-                        <AccessibleButton onClick={onClickSendDm} className="mx_HomePage_button_sendDm">
-                            {_tDom("onboarding|send_dm")}
-                        </AccessibleButton>
-                        <AccessibleButton onClick={onClickExplore} className="mx_HomePage_button_explore">
-                            {_tDom("onboarding|explore_rooms")}
-                        </AccessibleButton>
-                        <AccessibleButton onClick={onClickNewRoom} className="mx_HomePage_button_createGroup">
-                            {_tDom("onboarding|create_room")}
-                        </AccessibleButton>
-                    </div>
+            <div className="mx_HomePage_default_wrapper">
+                {introSection}
+                <div className="mx_HomePage_default_buttons">
+                    <AccessibleButton onClick={onClickSendDm} className="mx_HomePage_button_sendDm">
+                        {_tDom("onboarding|send_dm")}
+                    </AccessibleButton>
+                    <AccessibleButton onClick={onClickExplore} className="mx_HomePage_button_explore">
+                        {_tDom("onboarding|explore_rooms")}
+                    </AccessibleButton>
+                    <AccessibleButton onClick={onClickNewRoom} className="mx_HomePage_button_createGroup">
+                        {_tDom("onboarding|create_room")}
+                    </AccessibleButton>
                 </div>
-            )}
+            </div>
         </AutoHideScrollbar>
     );
 };

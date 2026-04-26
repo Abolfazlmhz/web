@@ -345,3 +345,14 @@ Please see LICENSE files in the repository root for full details.
         padding-right: 8px;
     }
 }
+
+@media only screen and (max-width: 768px) {
+    /* Hide the absolute-positioned E2E lock icon on mobile to prevent overlap with input text */
+    .mx_MessageComposer_e2eIcon.mx_E2EIcon {
+        display: none;
+    }
+
+    .mx_MessageComposer_e2eIconWrapper {
+        display: none;
+    }
+}

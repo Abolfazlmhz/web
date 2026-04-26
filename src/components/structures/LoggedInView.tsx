@@ -826,7 +826,7 @@ class LoggedInView extends React.Component<IProps, IState> {
 
         // Chat room / main content
         const chatRoomElement = (
-            <div className="mx_RoomView_wrapper" style={{ flex: 1, width: "100%", height: "100%" }}>
+            <div className="mx_RoomView_wrapper mx_MobileLayout_roomView">
                 {pageElement}
             </div>
         );

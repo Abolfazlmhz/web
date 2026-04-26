@@ -54,7 +54,7 @@ import { useScopedRoomContext } from "../../../../contexts/ScopedRoomContext.tsx
 import { ToggleableIcon } from "./toggle/ToggleableIcon.tsx";
 import { CurrentRightPanelPhaseContextProvider } from "../../../../contexts/CurrentRightPanelPhaseContext.tsx";
 import { LocalRoom } from "../../../../models/LocalRoom.ts";
-import { Action } from "../../../../dispatcher/actions.ts";
+import { useMobileNav } from "../../../structures/mobile/MobileNavContext";
 
 function RoomHeaderButtons({
     room,
@@ -344,6 +344,7 @@ export default function RoomHeader({
     const isDirectMessage = !!dmMember;
     const e2eStatus = useEncryptionStatus(client, room);
     const askToJoinEnabled = useFeatureEnabled("feature_ask_to_join");
+    const { navigate } = useMobileNav();
     const onAvatarClick = (): void => {
         defaultDispatcher.dispatch({
             action: "open_room_settings",
@@ -357,7 +358,7 @@ export default function RoomHeader({
                 <Flex as="header" align="center" gap="var(--cpd-space-3x)" className="mx_RoomHeader light-panel">
                     <button
                         className="mx_RoomHeader_mobileBackButton"
-                        onClick={() => defaultDispatcher.dispatch({ action: Action.ViewHomePage })}
+                        onClick={() => navigate("chatList")}
                         aria-label={_t("action|back")}
                     >
                         <div className="mx_RoomHeader_mobileBackIcon" />

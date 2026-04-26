@@ -13,58 +13,34 @@ import MobileLayout from "./MobileLayout";
 import PageTypes from "../../../PageTypes";
 
 interface Props {
-    /** The full desktop layout (everything inside mx_MatrixChat) */
     desktopLayout: ReactNode;
-    /** The chat list element for mobile (LeftPanel + wrapper) */
     chatListElement: ReactNode;
-    /** The room view / home page element for mobile */
     chatRoomElement: ReactNode;
-    /** Current page type from props */
     pageType?: string;
-    /** Current room ID */
     currentRoomId: string | null;
-    /** Whether services page is open */
-    isServicesOpen: boolean;
-    /** Whether agriculture page is open */
-    isAgricultureOpen: boolean;
-    /** Whether a right panel card is open */
-    showRightPanel: boolean;
-    /** The right panel phase */
-    rightPanelPhase: string | null;
+    /** Single state from LoggedInView that tells us what desktop is showing */
+    desktopPage: string;
 }
 
 /**
- * Inner component that syncs external state changes to mobile nav.
- * This bridges the old store-based navigation with the new context.
+ * Syncs desktop state changes to mobile nav context.
  */
 const MobileNavSync: React.FC<Props> = (props) => {
     const { navigate, currentPage } = useMobileNav();
     const isMobile = useIsMobile();
 
-    // Sync external store-initiated navigation to mobile nav.
-    // Only reacts to panels being OPENED — closing is handled by goBack() in MobileLayout.
+    // Sync store-initiated navigation to mobile nav (only when opening)
     useEffect(() => {
         if (!isMobile) return;
+        const dp = props.desktopPage;
+        if (dp === "services" && currentPage !== "services") navigate("services");
+        else if (dp === "agriculture" && currentPage !== "agriculture") navigate("agriculture");
+        else if (dp === "cardToCard" && currentPage !== "cardToCard") navigate("cardToCard");
+        else if (dp === "chargePurchase" && currentPage !== "chargePurchase") navigate("chargePurchase");
+        else if (dp === "billPayment" && currentPage !== "billPayment") navigate("billPayment");
+    }, [isMobile, props.desktopPage]); // eslint-disable-line react-hooks/exhaustive-deps
 
-        if (props.isServicesOpen) {
-            if (currentPage !== "services") navigate("services");
-        } else if (props.isAgricultureOpen) {
-            if (currentPage !== "agriculture") navigate("agriculture");
-        } else if (props.showRightPanel) {
-            const phase = props.rightPanelPhase;
-            if (phase === "CardToCard" && currentPage !== "cardToCard") navigate("cardToCard");
-            else if (phase === "ChargePurchase" && currentPage !== "chargePurchase") navigate("chargePurchase");
-            else if (phase === "BillPayment" && currentPage !== "billPayment") navigate("billPayment");
-        }
-    }, [
-        isMobile,
-        props.isServicesOpen,
-        props.isAgricultureOpen,
-        props.showRightPanel,
-        props.rightPanelPhase,
-    ]); // eslint-disable-line react-hooks/exhaustive-deps
-
-    // Sync room navigation separately — only when entering a room
+    // Sync room navigation
     useEffect(() => {
         if (!isMobile) return;
         if (props.pageType === PageTypes.RoomView && props.currentRoomId && currentPage !== "chatRoom") {

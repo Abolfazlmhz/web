@@ -5,7 +5,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Com
 Please see LICENSE files in the repository root for full details.
 */
 
-import React, { useContext } from "react";
+import React, { useContext, useCallback } from "react";
 import { Icon as ConsultantIcon } from "../../../../res/img/element-icons/agriculture-consultant.svg";
 import { Icon as OrganizationIcon } from "../../../../res/img/element-icons/agriculture-organization.svg";
 import { Icon as MarketIcon } from "../../../../res/img/element-icons/agriculture-market.svg";
@@ -19,6 +19,7 @@ import "../../../../res/css/views/agriculture/AgriculturePage.pcss";
 import MatrixClientContext from "../../../contexts/MatrixClientContext";
 import { DirectoryMember, startDmOnFirstMessage } from "../../../utils/direct-messages";
 import { _t } from "../../../languageHandler";
+import { useMobileNav } from "../../structures/mobile/MobileNavContext";
 
 interface AgricultureCardProps {
     title: string;
@@ -52,13 +53,16 @@ const AgricultureCard: React.FC<AgricultureCardProps> = ({ title, icon: Icon, di
 
 const AgriculturePage: React.FC = () => {
     const cli = useContext(MatrixClientContext);
+    const { navigate } = useMobileNav();
 
-    const handleMarketClick = async (userId: string): Promise<void> => {
+    const handleMarketClick = useCallback(async (userId: string): Promise<void> => {
         const advertiseBot = new DirectoryMember({
             user_id: userId,
         });
         await startDmOnFirstMessage(cli, [advertiseBot]);
-    };
+        // Navigate to chat room on mobile after opening the DM
+        navigate("chatRoom");
+    }, [cli, navigate]);
 
     return (
         <div className="mx_AgriculturePage">

@@ -111,6 +111,15 @@ interface IProps {
     forceTimeline?: boolean; // see props on MatrixChat
 }
 
+/** What the main content area shows on desktop */
+type DesktopPage =
+    | "default"       // Normal chat view (room list + room view / home page)
+    | "services"      // Services grid
+    | "agriculture"   // Agriculture grid
+    | "cardToCard"    // Card to card form
+    | "chargePurchase" // Charge purchase form
+    | "billPayment";  // Bill payment form
+
 interface IState {
     syncErrorData?: SyncStateData;
     usageLimitDismissed: boolean;
@@ -119,10 +128,8 @@ interface IState {
     useCompactLayout: boolean;
     activeCalls: Array<MatrixCall>;
     backgroundImage?: string;
-    showRightPanel: boolean;
-    rightPanelPhase: RightPanelPhases | null;
-    isServicesOpen: boolean;
-    isAgricultureOpen: boolean;
+    /** What the desktop main content area currently shows */
+    desktopPage: DesktopPage;
 }
 
 const NEW_ROOM_LIST_MIN_WIDTH = 224;
@@ -160,10 +167,7 @@ class LoggedInView extends React.Component<IProps, IState> {
             useCompactLayout: SettingsStore.getValue("useCompactLayout"),
             usageLimitDismissed: false,
             activeCalls: LegacyCallHandler.instance.getAllActiveCalls(),
-            showRightPanel: false,
-            rightPanelPhase: null,
-            isServicesOpen: false,
-            isAgricultureOpen: false,
+            desktopPage: "default",
         };
 
         // stash the MatrixClient in case we log out before we are unmounted
@@ -233,10 +237,10 @@ class LoggedInView extends React.Component<IProps, IState> {
             this.loadResizer();
         }
 
-        // Reload resizer when returning from a non-chat section (Services/Agriculture)
-        const wasNonChat = nextState.isServicesOpen || nextState.isAgricultureOpen;
-        const isNonChat = this.state.isServicesOpen || this.state.isAgricultureOpen;
-        if (wasNonChat && !isNonChat) {
+        // Reload resizer when returning to default chat view from a non-chat section
+        const wasNonDefault = nextState.desktopPage !== "default";
+        const isDefault = this.state.desktopPage === "default";
+        if (wasNonDefault && isDefault) {
             setTimeout(() => this.loadResizer(), 0);
         }
     }
@@ -722,17 +726,19 @@ class LoggedInView extends React.Component<IProps, IState> {
 
     private onRightPanelStoreUpdate = (): void => {
         const currentCard = RightPanelStore.instance.currentCard;
-        const isCardToCard = currentCard.phase === RightPanelPhases.CardToCard;
-        const isChargePurchase = currentCard.phase === RightPanelPhases.ChargePurchase;
-        const isBillPayment = currentCard.phase === RightPanelPhases.BillPayment;
-        const isServices = currentCard.phase === RightPanelPhases.Services;
-        const isAgriculture = currentCard.phase === RightPanelPhases.Agriculture;
-        this.setState({
-            showRightPanel: (isCardToCard || isChargePurchase || isBillPayment) && RightPanelStore.instance.isOpen,
-            rightPanelPhase: currentCard.phase,
-            isServicesOpen: isServices && RightPanelStore.instance.isOpen,
-            isAgricultureOpen: isAgriculture && RightPanelStore.instance.isOpen,
-        });
+        const isOpen = RightPanelStore.instance.isOpen;
+
+        let desktopPage: DesktopPage = "default";
+        if (isOpen) {
+            switch (currentCard.phase) {
+                case RightPanelPhases.Services: desktopPage = "services"; break;
+                case RightPanelPhases.Agriculture: desktopPage = "agriculture"; break;
+                case RightPanelPhases.CardToCard: desktopPage = "cardToCard"; break;
+                case RightPanelPhases.ChargePurchase: desktopPage = "chargePurchase"; break;
+                case RightPanelPhases.BillPayment: desktopPage = "billPayment"; break;
+            }
+        }
+        this.setState({ desktopPage });
     };
 
     public render(): React.ReactNode {
@@ -781,7 +787,7 @@ class LoggedInView extends React.Component<IProps, IState> {
             mx_MatrixChat_wrapper: true,
             mx_MatrixChat_useCompactLayout: this.state.useCompactLayout,
         });
-        const isNonChatSectionOpen = this.state.isServicesOpen || this.state.isAgricultureOpen;
+        const isNonChatSectionOpen = this.state.desktopPage !== "default";
         const bodyClasses = classNames({
             "mx_MatrixChat": true,
             "mx_MatrixChat--with-avatar": this.state.backgroundImage,
@@ -856,24 +862,17 @@ class LoggedInView extends React.Component<IProps, IState> {
                         <ResizeHandle passRef={this.resizeHandler} id="lp-resizer" />
                     )}
                     <div className="mx_RoomView_wrapper">
-                        {this.state.isServicesOpen ? (
-                            <ServicesPage />
-                        ) : this.state.isAgricultureOpen ? (
-                            <AgriculturePage />
-                        ) : (
-                            <>
-                                {pageElement}
-                                {this.state.showRightPanel && this.state.rightPanelPhase === RightPanelPhases.CardToCard && (
-                                    <CardToCardCard onClose={() => RightPanelStore.instance.togglePanel(null)} />
-                                )}
-                                {this.state.showRightPanel && this.state.rightPanelPhase === RightPanelPhases.ChargePurchase && (
-                                    <ChargePurchaseCard onClose={() => RightPanelStore.instance.togglePanel(null)} />
-                                )}
-                                {this.state.showRightPanel && this.state.rightPanelPhase === RightPanelPhases.BillPayment && (
-                                    <BillPaymentCard onClose={() => RightPanelStore.instance.togglePanel(null)} />
-                                )}
-                            </>
-                        )}
+                        {(() => {
+                            const onClose = (): void => RightPanelStore.instance.togglePanel(null);
+                            switch (this.state.desktopPage) {
+                                case "services": return <ServicesPage />;
+                                case "agriculture": return <AgriculturePage />;
+                                case "cardToCard": return <CardToCardCard onClose={onClose} />;
+                                case "chargePurchase": return <ChargePurchaseCard onClose={onClose} />;
+                                case "billPayment": return <BillPaymentCard onClose={onClose} />;
+                                default: return pageElement;
+                            }
+                        })()}
                     </div>
                 </div>
             </>
@@ -894,10 +893,7 @@ class LoggedInView extends React.Component<IProps, IState> {
                         chatRoomElement={chatRoomElement}
                         pageType={this.props.page_type}
                         currentRoomId={this.props.currentRoomId}
-                        isServicesOpen={this.state.isServicesOpen}
-                        isAgricultureOpen={this.state.isAgricultureOpen}
-                        showRightPanel={this.state.showRightPanel}
-                        rightPanelPhase={this.state.rightPanelPhase}
+                        desktopPage={this.state.desktopPage}
                     />
                 </div>
                 <PipContainer />

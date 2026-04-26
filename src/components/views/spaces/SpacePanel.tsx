@@ -390,7 +390,15 @@ const BillPaymentButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed"
 
 const ServicesButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> = ({ isPanelCollapsed }) => {
     const currentCard = useEventEmitterState(RightPanelStore.instance, UPDATE_EVENT, () => RightPanelStore.instance.currentCard);
-    const isSelected = currentCard.phase === RightPanelPhases.Services && RightPanelStore.instance.isOpen;
+    const phase = currentCard.phase;
+    const isOpen = RightPanelStore.instance.isOpen;
+    // Services tab stays selected when viewing service sub-pages (cards)
+    const isSelected = isOpen && (
+        phase === RightPanelPhases.Services ||
+        phase === RightPanelPhases.CardToCard ||
+        phase === RightPanelPhases.ChargePurchase ||
+        phase === RightPanelPhases.BillPayment
+    );
 
     const onServicesClick = (): void => {
         RightPanelStore.instance.setCard({ phase: RightPanelPhases.Services }, true, undefined);

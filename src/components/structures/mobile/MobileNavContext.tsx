@@ -19,7 +19,7 @@ export type MobilePage =
 export type MobileTab = "chat" | "agriculture" | "services";
 
 /** Pages that are "sub-pages" opened from a parent tab */
-const SUB_PAGES: Set<MobilePage> = new Set(["cardToCard", "chargePurchase", "billPayment", "chatRoom"]);
+const SUB_PAGES: Set<MobilePage> = new Set(["cardToCard", "chargePurchase", "billPayment"]);
 
 interface MobileNavState {
     currentPage: MobilePage;
@@ -70,7 +70,9 @@ export const MobileNavProvider: React.FC<{ children: ReactNode }> = ({ children 
         // When navigating to a top-level tab page, update the parent tab
         if (!SUB_PAGES.has(page)) {
             switch (page) {
-                case "chatList": parentTabRef.current = "chat"; break;
+                case "chatList":
+                case "chatRoom":
+                    parentTabRef.current = "chat"; break;
                 case "services": parentTabRef.current = "services"; break;
                 case "agriculture": parentTabRef.current = "agriculture"; break;
             }

@@ -66,6 +66,7 @@ import ChargePurchaseCard from "../views/right_panel/ChargePurchaseCard";
 import BillPaymentCard from "../views/right_panel/BillPaymentCard";
 import ServicesPage from "../views/services/ServicesPage";
 import AgriculturePage from "../views/agriculture/AgriculturePage";
+import MobileBottomNav from "../views/spaces/MobileBottomNav";
 import { KeyBindingAction } from "../../accessibility/KeyboardShortcuts";
 import { type SwitchSpacePayload } from "../../dispatcher/payloads/SwitchSpacePayload";
 import LeftPanelLiveShareWarning from "../views/beacon/LeftPanelLiveShareWarning";
@@ -122,6 +123,7 @@ interface IState {
     rightPanelPhase: RightPanelPhases | null;
     isServicesOpen: boolean;
     isAgricultureOpen: boolean;
+    mobileShowRoomView: boolean;
 }
 
 const NEW_ROOM_LIST_MIN_WIDTH = 224;
@@ -163,6 +165,7 @@ class LoggedInView extends React.Component<IProps, IState> {
             rightPanelPhase: null,
             isServicesOpen: false,
             isAgricultureOpen: false,
+            mobileShowRoomView: false,
         };
 
         // stash the MatrixClient in case we log out before we are unmounted
@@ -230,6 +233,23 @@ class LoggedInView extends React.Component<IProps, IState> {
     public componentDidUpdate(nextProps: Readonly<IProps>, nextState: Readonly<IState>, nextContext: any): void {
         if (nextProps.page_type !== this.props.page_type) {
             this.loadResizer();
+        }
+
+        // Track mobile navigation: show room view when entering RoomView or switching rooms
+        const wasRoomView = nextProps.page_type === PageTypes.RoomView;
+        const isRoomView = this.props.page_type === PageTypes.RoomView;
+        const roomChanged = this.props.currentRoomId !== nextProps.currentRoomId;
+
+        if (isRoomView && (!wasRoomView || roomChanged)) {
+            // Navigated into a room view (or switched rooms)
+            if (!this.state.mobileShowRoomView) {
+                this.setState({ mobileShowRoomView: true });
+            }
+        } else if (!isRoomView && wasRoomView) {
+            // Navigated away from room view (e.g. back to home)
+            if (this.state.mobileShowRoomView) {
+                this.setState({ mobileShowRoomView: false });
+            }
         }
 
         // Reload resizer when returning from a non-chat section (Services/Agriculture)
@@ -782,9 +802,12 @@ class LoggedInView extends React.Component<IProps, IState> {
             mx_MatrixChat_wrapper: true,
             mx_MatrixChat_useCompactLayout: this.state.useCompactLayout,
         });
+        const isNonChatSectionOpen = this.state.isServicesOpen || this.state.isAgricultureOpen;
         const bodyClasses = classNames({
             "mx_MatrixChat": true,
             "mx_MatrixChat--with-avatar": this.state.backgroundImage,
+            "mx_MatrixChat_mobileShowRoomView":
+                isNonChatSectionOpen || this.state.mobileShowRoomView || this.state.showRightPanel,
         });
 
         const useNewRoomList = SettingsStore.getValue("feature_new_room_list");
@@ -799,7 +822,6 @@ class LoggedInView extends React.Component<IProps, IState> {
         });
 
         const shouldUseMinimizedUI = !useNewRoomList && this.props.collapseLhs;
-        const isNonChatSectionOpen = this.state.isServicesOpen || this.state.isAgricultureOpen;
         return (
             <MatrixClientContextProvider client={this._matrixClient}>
                 <div
@@ -857,6 +879,7 @@ class LoggedInView extends React.Component<IProps, IState> {
                             )}
                         </div>
                     </div>
+                    <MobileBottomNav />
                 </div>
                 <PipContainer />
                 <NonUrgentToastContainer />

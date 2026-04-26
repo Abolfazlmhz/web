@@ -106,6 +106,37 @@ Please see LICENSE files in the repository root for full details.
     fill: var(--cpd-color-icon-accent-primary);
 }
 
+/* Mobile back button — hidden on desktop, shown on mobile */
+.mx_RoomHeader_mobileBackButton {
+    display: none;
+}
+
+@media only screen and (max-width: 768px) {
+    .mx_RoomHeader_mobileBackButton {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: none;
+        cursor: pointer;
+        padding: 0;
+        flex-shrink: 0;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .mx_RoomHeader_mobileBackIcon {
+        width: 24px;
+        height: 24px;
+        mask-image: url("@vector-im/compound-design-tokens/icons/chevron-left.svg");
+        mask-position: center;
+        mask-repeat: no-repeat;
+        mask-size: 24px;
+        background-color: $primary-content;
+    }
+}
+
 @media only screen and (max-width: 480px) {
     .mx_RoomHeader_wrapper {
         padding: 0;

@@ -13,6 +13,7 @@ import Spinner from "../elements/Spinner";
 import CheckCircleIcon from "@vector-im/compound-design-tokens/assets/web/icons/check-circle-solid";
 import { IconButton } from "@vector-im/compound-web";
 import CloseIcon from "@vector-im/compound-design-tokens/assets/web/icons/close";
+import { _t } from "../../../languageHandler";
 
 interface Props {
     onClose(): void;
@@ -45,45 +46,15 @@ const ChargePurchaseCard: React.FC<Props> = ({ onClose }) => {
     const otpRef = useRef<HTMLInputElement>(null);
     const phoneRef = useRef<HTMLInputElement>(null);
 
-    // Auto-focus phone input on mount
-    useEffect(() => {
-        phoneRef.current?.focus();
-    }, []);
+    useEffect(() => { phoneRef.current?.focus(); }, []);
+    useEffect(() => { if (step === 2) card1Ref.current?.focus(); }, [step]);
+    useEffect(() => { if (card1.length === 4) card2Ref.current?.focus(); }, [card1]);
+    useEffect(() => { if (card2.length === 4) card3Ref.current?.focus(); }, [card2]);
+    useEffect(() => { if (card3.length === 4) card4Ref.current?.focus(); }, [card3]);
+    useEffect(() => { if (expMonth.length === 2) expYearRef.current?.focus(); }, [expMonth]);
+    useEffect(() => { if (expYear.length === 2) cvv2Ref.current?.focus(); }, [expYear]);
+    useEffect(() => { if (cvv2.length >= 3) otpRef.current?.focus(); }, [cvv2]);
 
-    // Auto-focus first card input when step 2 is shown
-    useEffect(() => {
-        if (step === 2) {
-            card1Ref.current?.focus();
-        }
-    }, [step]);
-
-    // Auto-advance card inputs
-    useEffect(() => {
-        if (card1.length === 4) card2Ref.current?.focus();
-    }, [card1]);
-
-    useEffect(() => {
-        if (card2.length === 4) card3Ref.current?.focus();
-    }, [card2]);
-
-    useEffect(() => {
-        if (card3.length === 4) card4Ref.current?.focus();
-    }, [card3]);
-
-    // Auto-advance expiry inputs
-    useEffect(() => {
-        if (expMonth.length === 2) expYearRef.current?.focus();
-    }, [expMonth]);
-
-    useEffect(() => {
-        if (expYear.length === 2) cvv2Ref.current?.focus();
-    }, [expYear]);
-
-    useEffect(() => {
-        if (cvv2.length >= 3) otpRef.current?.focus();
-    }, [cvv2]);
-
-    // OTP timer
     useEffect(() => {
         if (otpTimer > 0) {
             const timer = setTimeout(() => setOtpTimer(otpTimer - 1), 1000);
@@ -93,118 +64,81 @@ const ChargePurchaseCard: React.FC<Props> = ({ onClose }) => {
         }
     }, [otpTimer, isOtpDisabled]);
 
-    const forceNumeric = (value: string): string => {
-        return value.replace(/[^0-9]/g, "");
-    };
+    const forceNumeric = (value: string): string => value.replace(/[^0-9]/g, "");
 
     const handleCardInput = (value: string, setter: (val: string) => void, maxLength: number) => {
         const numeric = forceNumeric(value);
-        if (numeric.length <= maxLength) {
-            setter(numeric);
-        }
+        if (numeric.length <= maxLength) setter(numeric);
     };
 
     const handlePhoneInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const numeric = forceNumeric(e.target.value);
-        if (numeric.length <= 11) {
-            setPhone(numeric);
-        }
-    };
-
-    const handleAmountClick = (amount: number) => {
-        setSelectedAmount(amount);
+        if (numeric.length <= 11) setPhone(numeric);
     };
 
     const handleNextStep = () => {
         if (!phone || phone.length !== 11 || !selectedAmount) {
             Modal.createDialog(ErrorDialog, {
-                title: "خطا",
-                description: "لطفاً شماره و مبلغ را انتخاب کنید",
+                title: _t("custom_panels|charge_error_title"),
+                description: _t("custom_panels|charge_error_select"),
             });
             return;
         }
         setStep(2);
     };
 
-    const handlePrevStep = () => {
-        setStep(1);
-    };
-
     const handleGetOtp = () => {
         if (isOtpDisabled) return;
-
         Modal.createDialog(InfoDialog, {
-            title: "رمز پویا ارسال شد!",
-            description: "رمز به شماره شما پیامک شد",
+            title: _t("custom_panels|charge_otp_sent_title"),
+            description: _t("custom_panels|charge_otp_sent_desc"),
             hasCloseButton: true,
         });
-
-        // Fill OTP for testing
         setOtp("483920");
-
-        // Disable button and start timer
         setIsOtpDisabled(true);
         setOtpTimer(60);
     };
 
     const handlePay = () => {
-        const fullCard = `${card1.padStart(4, "0")}-${card2.padStart(4, "0")}-${card3.padStart(4, "0")}-${card4.padStart(4, "0")}`;
-        const cardNumber = fullCard.replace(/-/g, "");
-
+        const cardNumber = `${card1}${card2}${card3}${card4}`;
         if (cardNumber.length !== 16) {
             Modal.createDialog(ErrorDialog, {
-                title: "خطا",
-                description: "شماره کارت کامل نیست",
+                title: _t("custom_panels|charge_error_title"),
+                description: _t("custom_panels|charge_error_card"),
             });
             return;
         }
-
         setIsSubmitting(true);
-
-        // Show progress dialog
-        const progressDialog = Modal.createDialog(
-            InfoDialog,
-            {
-                title: "در حال خرید شارژ...",
-                description: (
-                    <div style={{ textAlign: "center", direction: "rtl", marginTop: "20px" }}>
-                        <Spinner w={48} h={48} />
-                        <div style={{ marginTop: "20px" }}>
-                            <strong>{selectedAmount?.toLocaleString("fa-IR")} تومان</strong>
-                            <br />
-                            برای {phone}
-                        </div>
+        const progressDialog = Modal.createDialog(InfoDialog, {
+            title: _t("custom_panels|charge_paying"),
+            description: (
+                <div style={{ textAlign: "center", direction: "rtl", marginTop: "20px" }}>
+                    <Spinner w={48} h={48} />
+                    <div style={{ marginTop: "20px" }}>
+                        <strong>{selectedAmount?.toLocaleString("fa-IR")} تومان</strong>
+                        <br />
+                        {_t("custom_panels|charge_for_number", { phone })}
                     </div>
-                ),
-                hasCloseButton: false,
-                fixedWidth: true,
-            },
-            "mx_ChargePurchaseCard_progressDialog",
-        );
-
+                </div>
+            ),
+            hasCloseButton: false,
+            fixedWidth: true,
+        }, "mx_ChargePurchaseCard_progressDialog");
         progressDialogRef.current = progressDialog;
 
-        // After 2.8 seconds, show success
         setTimeout(() => {
             progressDialog.close();
             setIsSubmitting(false);
-
             Modal.createDialog(InfoDialog, {
-                title: "شارژ با موفقیت خریداری شد!",
+                title: _t("custom_panels|charge_success_title"),
                 description: (
                     <div style={{ textAlign: "right", direction: "rtl", lineHeight: "2" }}>
-                        <div className="mx_ChargePurchaseCard_checkmark" style={{ marginBottom: "20px", textAlign: "center" }}>
+                        <div style={{ marginBottom: "20px", textAlign: "center" }}>
                             <CheckCircleIcon width="80px" height="80px" style={{ color: "#326430" }} />
                         </div>
-                        <p>
-                            <strong>مبلغ:</strong> {selectedAmount?.toLocaleString("fa-IR")} تومان
-                        </p>
-                        <p>
-                            <strong>شماره:</strong> {phone}
-                        </p>
-                        <p>
-                            <strong>شماره پیگیری:</strong> ۹۸۷۶۵۴۳۲۱
-                        </p>
+                        <p><strong>{_t("custom_panels|charge_amount")}:</strong> {selectedAmount?.toLocaleString("fa-IR")} تومان</p>
+                        <p><strong>{_t("custom_panels|charge_number")}:</strong> {phone}</p>
+                        <p><strong>{_t("custom_panels|charge_tracking")}:</strong> ۹۸۷۶۵۴۳۲۱</p>
                     </div>
                 ),
                 hasCloseButton: true,
@@ -226,217 +160,79 @@ const ChargePurchaseCard: React.FC<Props> = ({ onClose }) => {
             <div className="mx_ChargePurchaseCard_container">
                 <div className="mx_ChargePurchaseCard_header">
                     <div className="mx_ChargePurchaseCard_headerContent">
-                        <h1>خرید شارژ</h1>
-                        <p>شارژ ایرانسل، همراه اول، رایتل</p>
+                        <h1>{_t("custom_panels|charge_purchase_title")}</h1>
+                        <p>{_t("custom_panels|charge_purchase_subtitle")}</p>
                     </div>
-                    <IconButton
-                        size="28px"
-                        onClick={onClose}
-                        tooltip="بستن"
-                        kind="secondary"
-                        className="mx_ChargePurchaseCard_closeBtn"
-                    >
+                    <IconButton size="28px" onClick={onClose} tooltip={_t("custom_panels|close")} kind="secondary" className="mx_ChargePurchaseCard_closeBtn">
                         <CloseIcon />
                     </IconButton>
                 </div>
 
                 <div className="mx_ChargePurchaseCard_formBody">
-                    {/* Step 1: Phone and Amount */}
                     {step === 1 && (
                         <div className="mx_ChargePurchaseCard_step" style={{ marginBottom: "100px" }}>
                             <div className="mx_ChargePurchaseCard_inputGroup">
-                                <label>شماره موبایل</label>
-                                <input
-                                    ref={phoneRef}
-                                    type="text"
-                                    id="phone"
-                                    value={phone}
-                                    onChange={handlePhoneInput}
-                                    placeholder="۰۹۱۲۳۴۵۶۷۸۹"
-                                    maxLength={11}
-                                    inputMode="numeric"
-                                />
+                                <label>{_t("custom_panels|charge_phone_label")}</label>
+                                <input ref={phoneRef} type="text" id="phone" value={phone} onChange={handlePhoneInput} placeholder={_t("custom_panels|charge_phone_placeholder")} maxLength={11} inputMode="numeric" />
                             </div>
-
                             <div className="mx_ChargePurchaseCard_inputGroup">
-                                <label>مبلغ شارژ</label>
+                                <label>{_t("custom_panels|charge_amount_label")}</label>
                                 <div className="mx_ChargePurchaseCard_amountButtons">
                                     {amountButtons.map((btn) => (
-                                        <div
-                                            key={btn.amount}
-                                            className={`mx_ChargePurchaseCard_amountBtn ${selectedAmount === btn.amount ? "selected" : ""
-                                                }`}
-                                            onClick={() => handleAmountClick(btn.amount)}
-                                        >
+                                        <div key={btn.amount} className={`mx_ChargePurchaseCard_amountBtn ${selectedAmount === btn.amount ? "selected" : ""}`} onClick={() => setSelectedAmount(btn.amount)}>
                                             {btn.label}
                                         </div>
                                     ))}
                                 </div>
                             </div>
-
-                            <button
-                                type="button"
-                                className="mx_ChargePurchaseCard_btnPrimary"
-                                onClick={handleNextStep}
-                            >
-                                مرحله بعد
-                            </button>
+                            <button type="button" className="mx_ChargePurchaseCard_btnPrimary" onClick={handleNextStep}>{_t("custom_panels|charge_next_step")}</button>
                         </div>
                     )}
 
-                    {/* Step 2: Payment */}
                     {step === 2 && (
                         <div className="mx_ChargePurchaseCard_step">
                             <div className="mx_ChargePurchaseCard_summary">
-                                خرید شارژ <strong>{selectedAmount?.toLocaleString("fa-IR")} تومان</strong> برای شماره{" "}
-                                <strong>{phone}</strong>
+                                {_t("custom_panels|charge_purchase")} <strong>{selectedAmount?.toLocaleString("fa-IR")} تومان</strong> {_t("custom_panels|charge_for_number", { phone: <strong>{phone}</strong> })}
                             </div>
-
                             <div className="mx_ChargePurchaseCard_inputGroup">
-                                <label>شماره کارت</label>
+                                <label>{_t("custom_panels|charge_card_number")}</label>
                                 <div className="mx_ChargePurchaseCard_cardInputs">
-                                    <input
-                                        ref={card1Ref}
-                                        type="text"
-                                        id="card1"
-                                        value={card1}
-                                        onChange={(e) => handleCardInput(e.target.value, setCard1, 4)}
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Backspace" && card1 === "") {
-                                                e.preventDefault();
-                                            }
-                                        }}
-                                        maxLength={4}
-                                        inputMode="numeric"
-                                    />
-                                    <input
-                                        ref={card2Ref}
-                                        type="text"
-                                        id="card2"
-                                        value={card2}
-                                        onChange={(e) => handleCardInput(e.target.value, setCard2, 4)}
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Backspace" && card2 === "") {
-                                                card1Ref.current?.focus();
-                                            }
-                                        }}
-                                        maxLength={4}
-                                        inputMode="numeric"
-                                    />
-                                    <input
-                                        ref={card3Ref}
-                                        type="text"
-                                        id="card3"
-                                        value={card3}
-                                        onChange={(e) => handleCardInput(e.target.value, setCard3, 4)}
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Backspace" && card3 === "") {
-                                                card2Ref.current?.focus();
-                                            }
-                                        }}
-                                        maxLength={4}
-                                        inputMode="numeric"
-                                    />
-                                    <input
-                                        ref={card4Ref}
-                                        type="text"
-                                        id="card4"
-                                        value={card4}
-                                        onChange={(e) => handleCardInput(e.target.value, setCard4, 4)}
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Backspace" && card4 === "") {
-                                                card3Ref.current?.focus();
-                                            }
-                                        }}
-                                        maxLength={4}
-                                        inputMode="numeric"
-                                    />
+                                    <input ref={card1Ref} type="text" value={card1} onChange={(e) => handleCardInput(e.target.value, setCard1, 4)} maxLength={4} inputMode="numeric" />
+                                    <input ref={card2Ref} type="text" value={card2} onChange={(e) => handleCardInput(e.target.value, setCard2, 4)} onKeyDown={(e) => { if (e.key === "Backspace" && card2 === "") card1Ref.current?.focus(); }} maxLength={4} inputMode="numeric" />
+                                    <input ref={card3Ref} type="text" value={card3} onChange={(e) => handleCardInput(e.target.value, setCard3, 4)} onKeyDown={(e) => { if (e.key === "Backspace" && card3 === "") card2Ref.current?.focus(); }} maxLength={4} inputMode="numeric" />
+                                    <input ref={card4Ref} type="text" value={card4} onChange={(e) => handleCardInput(e.target.value, setCard4, 4)} onKeyDown={(e) => { if (e.key === "Backspace" && card4 === "") card3Ref.current?.focus(); }} maxLength={4} inputMode="numeric" />
                                 </div>
                             </div>
-
                             <div className="mx_ChargePurchaseCard_row">
                                 <div className="mx_ChargePurchaseCard_inputGroup">
-                                    <label>ماه انقضا</label>
-                                    <input
-                                        ref={expMonthRef}
-                                        type="text"
-                                        id="expMonth"
-                                        value={expMonth}
-                                        onChange={(e) => handleCardInput(e.target.value, setExpMonth, 2)}
-                                        placeholder="۰۶"
-                                        maxLength={2}
-                                        inputMode="numeric"
-                                    />
+                                    <label>{_t("custom_panels|charge_exp_month")}</label>
+                                    <input ref={expMonthRef} type="text" value={expMonth} onChange={(e) => handleCardInput(e.target.value, setExpMonth, 2)} placeholder="۰۶" maxLength={2} inputMode="numeric" />
                                 </div>
                                 <div className="mx_ChargePurchaseCard_inputGroup">
-                                    <label>سال انقضا</label>
-                                    <input
-                                        ref={expYearRef}
-                                        type="text"
-                                        id="expYear"
-                                        value={expYear}
-                                        onChange={(e) => handleCardInput(e.target.value, setExpYear, 2)}
-                                        placeholder="۰۵"
-                                        maxLength={2}
-                                        inputMode="numeric"
-                                    />
+                                    <label>{_t("custom_panels|charge_exp_year")}</label>
+                                    <input ref={expYearRef} type="text" value={expYear} onChange={(e) => handleCardInput(e.target.value, setExpYear, 2)} placeholder="۰۵" maxLength={2} inputMode="numeric" />
                                 </div>
                                 <div className="mx_ChargePurchaseCard_inputGroup">
                                     <label>CVV2</label>
-                                    <input
-                                        ref={cvv2Ref}
-                                        type="text"
-                                        id="cvv2"
-                                        value={cvv2}
-                                        onChange={(e) => handleCardInput(e.target.value, setCvv2, 4)}
-                                        placeholder="۱۲۳"
-                                        maxLength={4}
-                                        inputMode="numeric"
-                                    />
+                                    <input ref={cvv2Ref} type="text" value={cvv2} onChange={(e) => handleCardInput(e.target.value, setCvv2, 4)} placeholder="۱۲۳" maxLength={4} inputMode="numeric" />
                                 </div>
                             </div>
-
                             <div className="mx_ChargePurchaseCard_inputGroup">
-                                <label>رمز پویا</label>
+                                <label>{_t("custom_panels|charge_otp")}</label>
                                 <div className="mx_ChargePurchaseCard_otpGroup">
-                                    <input
-                                        ref={otpRef}
-                                        type="text"
-                                        id="otpInput"
-                                        value={otp}
-                                        onChange={(e) => handleCardInput(e.target.value, setOtp, 6)}
-                                        placeholder="------"
-                                        maxLength={6}
-                                        inputMode="numeric"
-                                    />
-                                    <button
-                                        type="button"
-                                        className="mx_ChargePurchaseCard_getOtpBtn"
-                                        onClick={handleGetOtp}
-                                        disabled={isOtpDisabled}
-                                    >
-                                        {isOtpDisabled ? `${otpTimer}s` : "دریافت رمز"}
+                                    <input ref={otpRef} type="text" value={otp} onChange={(e) => handleCardInput(e.target.value, setOtp, 6)} placeholder="------" maxLength={6} inputMode="numeric" />
+                                    <button type="button" className="mx_ChargePurchaseCard_getOtpBtn" onClick={handleGetOtp} disabled={isOtpDisabled}>
+                                        {isOtpDisabled ? `${otpTimer}s` : _t("custom_panels|charge_get_otp")}
                                     </button>
                                 </div>
                                 {otpTimer > 0 && (
-                                    <div className="mx_ChargePurchaseCard_timer">
-                                        ارسال مجدد پس از {otpTimer} ثانیه
-                                    </div>
+                                    <div className="mx_ChargePurchaseCard_timer">{_t("custom_panels|charge_resend_otp", { seconds: String(otpTimer) })}</div>
                                 )}
                             </div>
-
-                            <button
-                                type="button"
-                                className="mx_ChargePurchaseCard_btnPrimary"
-                                onClick={handlePay}
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting ? "در حال خرید شارژ..." : "پرداخت شارژ"}
+                            <button type="button" className="mx_ChargePurchaseCard_btnPrimary" onClick={handlePay} disabled={isSubmitting}>
+                                {isSubmitting ? _t("custom_panels|charge_paying_btn") : _t("custom_panels|charge_pay_btn")}
                             </button>
-
-                            <button type="button" className="mx_ChargePurchaseCard_btnSecondary" onClick={handlePrevStep}>
-                                مرحله قبل
-                            </button>
+                            <button type="button" className="mx_ChargePurchaseCard_btnSecondary" onClick={() => setStep(1)}>{_t("custom_panels|charge_prev_step")}</button>
                         </div>
                     )}
                 </div>
@@ -446,5 +242,3 @@ const ChargePurchaseCard: React.FC<Props> = ({ onClose }) => {
 };
 
 export default ChargePurchaseCard;
-
-

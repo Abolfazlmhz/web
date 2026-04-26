@@ -485,7 +485,10 @@ const ToggleRoomListButton: React.FC<{ isPanelCollapsed: boolean }> = ({ isPanel
         const onResize = (): void => {
             const isMobile = window.innerWidth <= 768;
             if (isMobile) {
-                applyVisibility(false);
+                // On mobile, room list visibility is handled by Telegram-style
+                // page switching (mx_MatrixChat_mobileShowRoomView class).
+                // Always keep the room list element visible so CSS can control it.
+                applyVisibility(true);
             } else {
                 applyVisibility(true);
             }

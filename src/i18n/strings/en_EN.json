@@ -537,6 +537,7 @@
         "model": "Model",
         "moderation_and_safety": "Moderation and safety",
         "modern": "Modern",
+        "more": "More",
         "mute": "Mute",
         "n_members": {
             "one": "%(count)s member",
@@ -586,6 +587,7 @@
         "setup_secure_messages": "Set up Secure Messages",
         "show_more": "Show more",
         "someone": "Someone",
+        "social": "Social",
         "space": "Space",
         "spaces": "Spaces",
         "sticker": "Sticker",

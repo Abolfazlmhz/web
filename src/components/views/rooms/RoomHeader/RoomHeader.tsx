@@ -54,6 +54,7 @@ import { useScopedRoomContext } from "../../../../contexts/ScopedRoomContext.tsx
 import { ToggleableIcon } from "./toggle/ToggleableIcon.tsx";
 import { CurrentRightPanelPhaseContextProvider } from "../../../../contexts/CurrentRightPanelPhaseContext.tsx";
 import { LocalRoom } from "../../../../models/LocalRoom.ts";
+import { Action } from "../../../../dispatcher/actions.ts";
 
 function RoomHeaderButtons({
     room,
@@ -354,6 +355,13 @@ export default function RoomHeader({
         <>
             <CurrentRightPanelPhaseContextProvider roomId={room.roomId}>
                 <Flex as="header" align="center" gap="var(--cpd-space-3x)" className="mx_RoomHeader light-panel">
+                    <button
+                        className="mx_RoomHeader_mobileBackButton"
+                        onClick={() => defaultDispatcher.dispatch({ action: Action.ViewHomePage })}
+                        aria-label={_t("action|back")}
+                    >
+                        <div className="mx_RoomHeader_mobileBackIcon" />
+                    </button>
                     <WithPresenceIndicator room={room} size="8px">
                         {/* We hide this from the tabIndex list as it is a pointer shortcut and superfluous for a11y */}
                         {/* Disable on-click actions until the room is created */}

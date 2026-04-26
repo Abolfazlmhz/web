@@ -328,3 +328,30 @@ Please see LICENSE files in the repository root for full details.
     }
 }
 
+
+/* Mobile: full-screen page instead of dialog card */
+@media only screen and (max-width: 768px) {
+    .mx_BillPaymentCard {
+        padding: 0;
+        height: 100% !important;
+        max-width: none;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+
+        .mx_BillPaymentCard_container {
+            max-width: none;
+            border-radius: 0;
+            box-shadow: none;
+            min-height: 100%;
+        }
+
+        .mx_BillPaymentCard_header {
+            border-radius: 0;
+            padding: 24px 16px;
+        }
+
+        .mx_BillPaymentCard_formBody {
+            padding: 24px 16px;
+        }
+    }
+}

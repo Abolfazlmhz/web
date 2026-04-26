@@ -588,50 +588,12 @@ Please see LICENSE files in the repository root for full details.
 /* Mobile responsive layout */
 @media only screen and (max-width: 768px) {
     .mx_SpacePanel {
-        &.collapsed {
-            width: 52px;
-
-            /* Center the space buttons within the narrower panel */
-            .mx_SpaceTreeLevel {
-                align-items: center;
-            }
-
-            .mx_SpaceItem {
-                justify-content: center;
-            }
-
-            .mx_SpaceItem:not(.hasSubSpaces) > .mx_SpaceButton {
-                margin-left: 0;
-                justify-content: center;
-            }
-
-            .mx_SpaceButton {
-                justify-content: center;
-                padding: 4px 0;
-            }
-
-            .mx_SpaceButton_selectionWrapper {
-                justify-content: center;
-            }
-        }
-
-        .mx_UserMenu {
-            margin: 8px auto 4px;
-            display: flex;
-            justify-content: center;
-        }
+        display: none;
     }
 }
 
 @media only screen and (max-width: 480px) {
     .mx_SpacePanel {
-        &.collapsed {
-            width: 48px;
-        }
-
-        .mx_UserMenu {
-            margin: 6px auto 4px;
-            padding-bottom: 6px;
-        }
+        display: none;
     }
 }

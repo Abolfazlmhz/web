@@ -69,48 +69,9 @@ Please see LICENSE files in the repository root for full details.
     }
 }
 
-/* Mobile responsive layout — Telegram-style single-page navigation */
+/* Mobile responsive layout */
 @media only screen and (max-width: 768px) {
-    .mx_MatrixChat_wrapper {
-        flex-direction: column;
-    }
-
-    .mx_MatrixChat {
-        flex: 1;
-        min-height: 0;
-    }
-
     .mx_MatrixChat > .mx_ResizeHandle--horizontal {
         display: none;
-    }
-
-    /* The left panel outer wrapper takes full width on mobile */
-    .mx_MatrixChat > .mx_LeftPanel_outerWrapper {
-        max-width: none;
-        width: 100%;
-        flex: 1;
-        min-height: 0;
-    }
-
-    /* Default mobile state: show room list, hide room view */
-    .mx_MatrixChat > .mx_RoomView_wrapper {
-        display: none;
-    }
-
-    /* When viewing a room or non-chat section: hide room list, show room view */
-    .mx_MatrixChat.mx_MatrixChat_mobileShowRoomView > .mx_LeftPanel_outerWrapper {
-        display: none;
-    }
-
-    .mx_MatrixChat.mx_MatrixChat_mobileShowRoomView > .mx_RoomView_wrapper {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-        min-width: 0;
-        min-height: 0;
-        width: 100%;
-        height: 100%;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
     }
 }

@@ -66,7 +66,7 @@ import ChargePurchaseCard from "../views/right_panel/ChargePurchaseCard";
 import BillPaymentCard from "../views/right_panel/BillPaymentCard";
 import ServicesPage from "../views/services/ServicesPage";
 import AgriculturePage from "../views/agriculture/AgriculturePage";
-import MobileBottomNav from "../views/spaces/MobileBottomNav";
+import MobileAwareLayout from "./mobile/MobileAwareLayout";
 import { KeyBindingAction } from "../../accessibility/KeyboardShortcuts";
 import { type SwitchSpacePayload } from "../../dispatcher/payloads/SwitchSpacePayload";
 import LeftPanelLiveShareWarning from "../views/beacon/LeftPanelLiveShareWarning";
@@ -123,7 +123,6 @@ interface IState {
     rightPanelPhase: RightPanelPhases | null;
     isServicesOpen: boolean;
     isAgricultureOpen: boolean;
-    mobileShowRoomView: boolean;
 }
 
 const NEW_ROOM_LIST_MIN_WIDTH = 224;
@@ -165,7 +164,6 @@ class LoggedInView extends React.Component<IProps, IState> {
             rightPanelPhase: null,
             isServicesOpen: false,
             isAgricultureOpen: false,
-            mobileShowRoomView: false,
         };
 
         // stash the MatrixClient in case we log out before we are unmounted
@@ -235,29 +233,10 @@ class LoggedInView extends React.Component<IProps, IState> {
             this.loadResizer();
         }
 
-        // Track mobile navigation: show room view when entering RoomView or switching rooms
-        const wasRoomView = nextProps.page_type === PageTypes.RoomView;
-        const isRoomView = this.props.page_type === PageTypes.RoomView;
-        const roomChanged = this.props.currentRoomId !== nextProps.currentRoomId;
-
-        if (isRoomView && (!wasRoomView || roomChanged)) {
-            // Navigated into a room view (or switched rooms)
-            if (!this.state.mobileShowRoomView) {
-                this.setState({ mobileShowRoomView: true });
-            }
-        } else if (!isRoomView && wasRoomView) {
-            // Navigated away from room view (e.g. back to home)
-            if (this.state.mobileShowRoomView) {
-                this.setState({ mobileShowRoomView: false });
-            }
-        }
-
         // Reload resizer when returning from a non-chat section (Services/Agriculture)
-        // because the LeftPanel wrapper was unmounted and the resizer lost its DOM references
         const wasNonChat = nextState.isServicesOpen || nextState.isAgricultureOpen;
         const isNonChat = this.state.isServicesOpen || this.state.isAgricultureOpen;
         if (wasNonChat && !isNonChat) {
-            // Use setTimeout to ensure the DOM has re-rendered before rebinding
             setTimeout(() => this.loadResizer(), 0);
         }
     }
@@ -806,8 +785,6 @@ class LoggedInView extends React.Component<IProps, IState> {
         const bodyClasses = classNames({
             "mx_MatrixChat": true,
             "mx_MatrixChat--with-avatar": this.state.backgroundImage,
-            "mx_MatrixChat_mobileShowRoomView":
-                isNonChatSectionOpen || this.state.mobileShowRoomView || this.state.showRightPanel,
         });
 
         const useNewRoomList = SettingsStore.getValue("feature_new_room_list");
@@ -822,6 +799,86 @@ class LoggedInView extends React.Component<IProps, IState> {
         });
 
         const shouldUseMinimizedUI = !useNewRoomList && this.props.collapseLhs;
+
+        // --- Build the pieces ---
+
+        // Chat list (left panel with room list)
+        const chatListElement = (
+            <div className="mx_LeftPanel_outerWrapper" style={{ width: "100%", maxWidth: "none", flex: 1 }}>
+                <LeftPanelLiveShareWarning isMinimized={false} />
+                <div className={leftPanelWrapperClasses} style={{ width: "100%" }}>
+                    <div className="mx_LeftPanel_wrapper--user" style={{ width: "100%" }}>
+                        <LeftPanel
+                            pageType={this.props.page_type as PageTypes}
+                            isMinimized={false}
+                            resizeNotifier={this.context.resizeNotifier}
+                        />
+                    </div>
+                </div>
+            </div>
+        );
+
+        // Chat room / main content
+        const chatRoomElement = (
+            <div className="mx_RoomView_wrapper" style={{ flex: 1, width: "100%", height: "100%" }}>
+                {pageElement}
+            </div>
+        );
+
+        // Desktop layout (the original full layout)
+        const desktopLayout = (
+            <>
+                <div className={bodyClasses}>
+                    <div className="mx_LeftPanel_outerWrapper">
+                        <LeftPanelLiveShareWarning isMinimized={shouldUseMinimizedUI || false} />
+                        <div className={leftPanelWrapperClasses}>
+                            {!useNewRoomList && (
+                                <BackdropPanel blurMultiplier={0.5} backgroundImage={this.state.backgroundImage} />
+                            )}
+                            <SpacePanel />
+                            {!useNewRoomList && <BackdropPanel backgroundImage={this.state.backgroundImage} />}
+                            {!moduleRenderer && !isNonChatSectionOpen && (
+                                <div
+                                    className="mx_LeftPanel_wrapper--user"
+                                    ref={this._resizeContainer}
+                                    data-collapsed={shouldUseMinimizedUI ? true : undefined}
+                                >
+                                    <LeftPanel
+                                        pageType={this.props.page_type as PageTypes}
+                                        isMinimized={shouldUseMinimizedUI || false}
+                                        resizeNotifier={this.context.resizeNotifier}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    {!moduleRenderer && !isNonChatSectionOpen && (
+                        <ResizeHandle passRef={this.resizeHandler} id="lp-resizer" />
+                    )}
+                    <div className="mx_RoomView_wrapper">
+                        {this.state.isServicesOpen ? (
+                            <ServicesPage />
+                        ) : this.state.isAgricultureOpen ? (
+                            <AgriculturePage />
+                        ) : (
+                            <>
+                                {pageElement}
+                                {this.state.showRightPanel && this.state.rightPanelPhase === RightPanelPhases.CardToCard && (
+                                    <CardToCardCard onClose={() => RightPanelStore.instance.togglePanel(null)} />
+                                )}
+                                {this.state.showRightPanel && this.state.rightPanelPhase === RightPanelPhases.ChargePurchase && (
+                                    <ChargePurchaseCard onClose={() => RightPanelStore.instance.togglePanel(null)} />
+                                )}
+                                {this.state.showRightPanel && this.state.rightPanelPhase === RightPanelPhases.BillPayment && (
+                                    <BillPaymentCard onClose={() => RightPanelStore.instance.togglePanel(null)} />
+                                )}
+                            </>
+                        )}
+                    </div>
+                </div>
+            </>
+        );
+
         return (
             <MatrixClientContextProvider client={this._matrixClient}>
                 <div
@@ -831,55 +888,17 @@ class LoggedInView extends React.Component<IProps, IState> {
                     aria-hidden={this.props.hideToSRUsers}
                 >
                     <ToastContainer />
-                    <div className={bodyClasses}>
-                        <div className="mx_LeftPanel_outerWrapper">
-                            <LeftPanelLiveShareWarning isMinimized={shouldUseMinimizedUI || false} />
-                            <div className={leftPanelWrapperClasses}>
-                                {!useNewRoomList && (
-                                    <BackdropPanel blurMultiplier={0.5} backgroundImage={this.state.backgroundImage} />
-                                )}
-                                <SpacePanel />
-                                {!useNewRoomList && <BackdropPanel backgroundImage={this.state.backgroundImage} />}
-                                {!moduleRenderer && !isNonChatSectionOpen && (
-                                    <div
-                                        className="mx_LeftPanel_wrapper--user"
-                                        ref={this._resizeContainer}
-                                        data-collapsed={shouldUseMinimizedUI ? true : undefined}
-                                    >
-                                        <LeftPanel
-                                            pageType={this.props.page_type as PageTypes}
-                                            isMinimized={shouldUseMinimizedUI || false}
-                                            resizeNotifier={this.context.resizeNotifier}
-                                        />
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                        {!moduleRenderer && !isNonChatSectionOpen && (
-                            <ResizeHandle passRef={this.resizeHandler} id="lp-resizer" />
-                        )}
-                        <div className="mx_RoomView_wrapper">
-                            {this.state.isServicesOpen ? (
-                                <ServicesPage />
-                            ) : this.state.isAgricultureOpen ? (
-                                <AgriculturePage />
-                            ) : (
-                                <>
-                                    {pageElement}
-                                    {this.state.showRightPanel && this.state.rightPanelPhase === RightPanelPhases.CardToCard && (
-                                        <CardToCardCard onClose={() => RightPanelStore.instance.togglePanel(null)} />
-                                    )}
-                                    {this.state.showRightPanel && this.state.rightPanelPhase === RightPanelPhases.ChargePurchase && (
-                                        <ChargePurchaseCard onClose={() => RightPanelStore.instance.togglePanel(null)} />
-                                    )}
-                                    {this.state.showRightPanel && this.state.rightPanelPhase === RightPanelPhases.BillPayment && (
-                                        <BillPaymentCard onClose={() => RightPanelStore.instance.togglePanel(null)} />
-                                    )}
-                                </>
-                            )}
-                        </div>
-                    </div>
-                    <MobileBottomNav />
+                    <MobileAwareLayout
+                        desktopLayout={desktopLayout}
+                        chatListElement={chatListElement}
+                        chatRoomElement={chatRoomElement}
+                        pageType={this.props.page_type}
+                        currentRoomId={this.props.currentRoomId}
+                        isServicesOpen={this.state.isServicesOpen}
+                        isAgricultureOpen={this.state.isAgricultureOpen}
+                        showRightPanel={this.state.showRightPanel}
+                        rightPanelPhase={this.state.rightPanelPhase}
+                    />
                 </div>
                 <PipContainer />
                 <NonUrgentToastContainer />

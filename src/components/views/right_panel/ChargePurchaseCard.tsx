@@ -156,7 +156,7 @@ const ChargePurchaseCard: React.FC<Props> = ({ onClose }) => {
     ];
 
     return (
-        <div className="mx_ChargePurchaseCard" style={{ height: "95%" }}>
+        <div className="mx_ChargePurchaseCard">
             <div className="mx_ChargePurchaseCard_container">
                 <div className="mx_ChargePurchaseCard_header">
                     <div className="mx_ChargePurchaseCard_headerContent">
@@ -170,7 +170,7 @@ const ChargePurchaseCard: React.FC<Props> = ({ onClose }) => {
 
                 <div className="mx_ChargePurchaseCard_formBody">
                     {step === 1 && (
-                        <div className="mx_ChargePurchaseCard_step" style={{ marginBottom: "100px" }}>
+                        <div className="mx_ChargePurchaseCard_step">
                             <div className="mx_ChargePurchaseCard_inputGroup">
                                 <label>{_t("custom_panels|charge_phone_label")}</label>
                                 <input ref={phoneRef} type="text" id="phone" value={phone} onChange={handlePhoneInput} placeholder={_t("custom_panels|charge_phone_placeholder")} maxLength={11} inputMode="numeric" />

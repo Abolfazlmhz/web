@@ -1,0 +1,33 @@
+/*
+Copyright 2024 New Vector Ltd.
+
+SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Commercial
+Please see LICENSE files in the repository root for full details.
+*/
+
+.mx_MobileLayout {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.mx_MobileLayout_content {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.mx_MobileLayout_page {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.mx_MobileLayout_page--scrollable {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}

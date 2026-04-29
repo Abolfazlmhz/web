@@ -1457,3 +1457,59 @@ $left-gutter: 64px;
         margin-right: 0;
     }
 }
+
+/* ==========================================
+   Message bubble styling for Agrino theme
+   ========================================== */
+
+/* Received messages: white bubble */
+.mx_EventTile[data-self="false"] .mx_EventTile_line {
+    background-color: #ffffff !important;
+    border-radius: 12px !important;
+    padding: 8px 12px !important;
+    margin-bottom: 4px;
+    display: inline-block !important;
+    max-width: 85%;
+}
+
+/* Sent messages (own): dark green bubble with white text */
+.mx_EventTile[data-self="true"] .mx_EventTile_line {
+    background-color: #326430 !important;
+    border-radius: 12px !important;
+    padding: 8px 12px !important;
+    margin-bottom: 4px;
+    display: inline-block !important;
+    max-width: 85%;
+    color: #ffffff !important;
+}
+
+/* Ensure links in sent messages are visible */
+.mx_EventTile[data-self="true"] .mx_EventTile_line a {
+    color: #a8d8a8 !important;
+}
+
+/* Keep bubble colors on hover — don't let hover change backgrounds */
+.mx_EventTile[data-self="false"]:hover .mx_EventTile_line {
+    background-color: #ffffff !important;
+    box-shadow: none !important;
+}
+
+.mx_EventTile[data-self="true"]:hover .mx_EventTile_line {
+    background-color: #326430 !important;
+    box-shadow: none !important;
+}
+
+/* Also prevent hover on the tile itself from adding background */
+.mx_EventTile:hover > .mx_EventTile_line {
+    box-shadow: none !important;
+}
+
+/* Add subtle separator between message groups */
+.mx_EventTile:not(.mx_EventTile_continuation) {
+    margin-top: 8px;
+}
+
+/* Continuation messages have less spacing */
+.mx_EventTile.mx_EventTile_continuation {
+    padding-top: 2px;
+}

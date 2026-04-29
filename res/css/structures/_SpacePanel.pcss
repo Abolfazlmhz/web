@@ -7,8 +7,8 @@ Please see LICENSE files in the repository root for full details.
 */
 
 .mx_SpacePanel {
-    --activeBackground-color: $panel-actions;
-    --activeBorder-color: $primary-content;
+    --activeBackground-color: #326430;
+    --activeBorder-color: #326430;
     --activeBorder-transparent-gap: 1px;
     --gutterSize: 14px;
     --height-nested: 24px;
@@ -135,11 +135,29 @@ Please see LICENSE files in the repository root for full details.
         &.mx_SpaceButton_active {
             &:not(.mx_SpaceButton_narrow) .mx_SpaceButton_selectionWrapper {
                 background-color: var(--activeBackground-color);
+
+                .mx_SpaceButton_icon::before {
+                    background-color: #ffffff;
+                }
+
+                .mx_SpaceButton_name {
+                    color: #ffffff;
+                }
             }
 
             &.mx_SpaceButton_narrow .mx_SpaceButton_selectionWrapper {
                 padding: var(--activeBorder-transparent-gap);
                 border: 3px var(--activeBorder-color) solid;
+                background-color: var(--activeBackground-color);
+                border-radius: 12px;
+
+                .mx_SpaceButton_icon {
+                    background-color: transparent;
+
+                    &::before {
+                        background-color: #ffffff;
+                    }
+                }
             }
         }
 
@@ -483,7 +501,7 @@ Please see LICENSE files in the repository root for full details.
         }
 
         &.mx_SpacePanel_toggleRoomListBtn_active {
-            background-color: var(--activeBackground-color);
+            background-color: $panel-actions;
 
             &::before {
                 background-color: $primary-content;

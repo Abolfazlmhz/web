@@ -18,6 +18,7 @@ Please see LICENSE files in the repository root for full details.
     flex-direction: column;
     max-width: 50%;
     position: relative;
+    border-right: 1px solid $separator;
 
     /* Contain the amount of layers rendered by constraining what actually needs re-layering via css */
     contain: layout paint;
@@ -39,6 +40,7 @@ Please see LICENSE files in the repository root for full details.
         display: flex;
         overflow: hidden;
         position: relative;
+        border-left: 1px solid $separator;
 
         &[data-collapsed] {
             max-width: var(--collapsedWidth);

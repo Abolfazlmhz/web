@@ -776,6 +776,20 @@ module.exports = (env, argv) => {
 
             // Disable host check
             allowedHosts: "all",
+
+            // Proxy Matrix API requests to avoid CORS in development
+            proxy: [
+                {
+                    context: ["/_matrix", "/_synapse"],
+                    target: "https://agridemo.ir",
+                    changeOrigin: true,
+                    secure: false,
+                    headers: {
+                        "Origin": "https://agridemo.ir",
+                    },
+                    logLevel: "debug",
+                },
+            ],
         },
     };
 };

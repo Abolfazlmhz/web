@@ -214,3 +214,69 @@ This software is multi licensed by New Vector Ltd (Element). It can be used eith
 
 (3) under the terms of a paid-for Element Commercial License agreement between you and Element (the terms of which may vary depending on what you and Element have agreed to).
 Unless required by applicable law or agreed to in writing, software distributed under the Licenses is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licenses for the specific language governing permissions and limitations under the Licenses.
+
+# Install & Run
+
+## Prerequisites
+
+- **Node.js** >= 20 (the project targets Node 24 via `.node-version`)
+- **Yarn 1 (Classic)** — the project uses Yarn 1.22.x. Install it with `npm install -g yarn` if you don't have it.
+
+## Install dependencies
+
+```bash
+yarn install
+```
+
+This single command handles everything:
+
+1. Installs all root dependencies.
+2. Automatically builds the **`@element-hq/web-shared-components`** package (located in `packages/shared-components`). Its `prepare` script runs during install, which copies static resources (`build:res`), gathers translation keys, and produces a Vite build into `dist/`.
+3. Applies any patches via `patch-package` (the root `postinstall` script).
+
+> **Note:** `matrix-js-sdk` is pulled directly from the `develop` branch on GitHub, so the install step also fetches and builds that dependency. This may take a bit longer than a typical npm registry install.
+
+## Run the development server
+
+```bash
+yarn start
+```
+
+This builds the module system and static resources first, then starts:
+
+- A file watcher that keeps static resources up to date (`start:res`)
+- A webpack-dev-server for the app (`start:js`)
+
+The app will be available at **http://localhost:8080** by default.
+
+For HTTPS, use:
+
+```bash
+yarn start:https
+```
+
+## Build for production
+
+```bash
+yarn build
+```
+
+This cleans previous output, generates required files (resources + module system), and runs a production webpack build. The output goes into the `webapp/` directory.
+
+To create a distributable tarball:
+
+```bash
+yarn dist
+```
+
+> `yarn dist` is not supported on Windows. Windows users should use `yarn build` and serve the `webapp/` directory directly.
+
+## Configuration
+
+Copy the sample config and edit it for your environment:
+
+```bash
+cp config.sample.json config.json
+```
+
+See [docs/config.md](docs/config.md) for full configuration details.

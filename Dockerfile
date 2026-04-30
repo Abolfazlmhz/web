@@ -15,6 +15,7 @@ WORKDIR /src
 
 COPY --exclude=docker . /src
 RUN /src/scripts/docker-link-repos.sh
+RUN yarn config set npmRegistryServer https://mirror-npm.runflare.com
 RUN yarn --network-timeout=200000 install
 RUN /src/scripts/docker-package.sh
 

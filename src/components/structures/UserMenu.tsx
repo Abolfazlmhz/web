@@ -414,10 +414,10 @@ export default class UserMenu extends React.Component<IProps, IState> {
         const displayName = OwnProfileStore.instance.displayName || userId;
         const avatarUrl = OwnProfileStore.instance.getHttpAvatarUrl(avatarSize);
 
-        let name: JSX.Element | undefined;
-        if (!this.props.isPanelCollapsed) {
-            name = <div className="mx_UserMenu_name">{displayName}</div>;
-        }
+        // let name: JSX.Element | undefined;
+        // if (!this.props.isPanelCollapsed) {
+        //     name = <div className="mx_UserMenu_name">{displayName}</div>;
+        // }
 
         return (
             <div className="mx_UserMenu">
@@ -438,7 +438,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
                             className="mx_UserMenu_userAvatar_BaseAvatar"
                         />
                     </div>
-                    {name}
+                    {/* {name} */}
                     {this.renderContextMenu()}
                 </ContextMenuButton>
 

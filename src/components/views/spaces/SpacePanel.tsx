@@ -272,9 +272,9 @@ const CreateSpaceButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed"
     const onNewClick = menuDisplayed
         ? closeMenu
         : () => {
-            if (!isPanelCollapsed) setPanelCollapsed(true);
-            openMenu();
-        };
+              if (!isPanelCollapsed) setPanelCollapsed(true);
+              openMenu();
+          };
 
     return (
         <li
@@ -302,7 +302,11 @@ const CreateSpaceButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed"
 };
 
 const CardToCardButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> = ({ isPanelCollapsed }) => {
-    const currentCard = useEventEmitterState(RightPanelStore.instance, UPDATE_EVENT, () => RightPanelStore.instance.currentCard);
+    const currentCard = useEventEmitterState(
+        RightPanelStore.instance,
+        UPDATE_EVENT,
+        () => RightPanelStore.instance.currentCard,
+    );
     const isSelected = currentCard.phase === RightPanelPhases.CardToCard && RightPanelStore.instance.isOpen;
 
     const onCardToCardClick = (): void => {
@@ -331,7 +335,11 @@ const CardToCardButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">
 };
 
 const ChargePurchaseButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> = ({ isPanelCollapsed }) => {
-    const currentCard = useEventEmitterState(RightPanelStore.instance, UPDATE_EVENT, () => RightPanelStore.instance.currentCard);
+    const currentCard = useEventEmitterState(
+        RightPanelStore.instance,
+        UPDATE_EVENT,
+        () => RightPanelStore.instance.currentCard,
+    );
     const isSelected = currentCard.phase === RightPanelPhases.ChargePurchase && RightPanelStore.instance.isOpen;
 
     const onChargePurchaseClick = (): void => {
@@ -360,7 +368,11 @@ const ChargePurchaseButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollaps
 };
 
 const BillPaymentButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> = ({ isPanelCollapsed }) => {
-    const currentCard = useEventEmitterState(RightPanelStore.instance, UPDATE_EVENT, () => RightPanelStore.instance.currentCard);
+    const currentCard = useEventEmitterState(
+        RightPanelStore.instance,
+        UPDATE_EVENT,
+        () => RightPanelStore.instance.currentCard,
+    );
     const isSelected = currentCard.phase === RightPanelPhases.BillPayment && RightPanelStore.instance.isOpen;
 
     const onBillPaymentClick = (): void => {
@@ -389,16 +401,20 @@ const BillPaymentButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed"
 };
 
 const ServicesButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> = ({ isPanelCollapsed }) => {
-    const currentCard = useEventEmitterState(RightPanelStore.instance, UPDATE_EVENT, () => RightPanelStore.instance.currentCard);
+    const currentCard = useEventEmitterState(
+        RightPanelStore.instance,
+        UPDATE_EVENT,
+        () => RightPanelStore.instance.currentCard,
+    );
     const phase = currentCard.phase;
     const isOpen = RightPanelStore.instance.isOpen;
     // Services tab stays selected when viewing service sub-pages (cards)
-    const isSelected = isOpen && (
-        phase === RightPanelPhases.Services ||
-        phase === RightPanelPhases.CardToCard ||
-        phase === RightPanelPhases.ChargePurchase ||
-        phase === RightPanelPhases.BillPayment
-    );
+    const isSelected =
+        isOpen &&
+        (phase === RightPanelPhases.Services ||
+            phase === RightPanelPhases.CardToCard ||
+            phase === RightPanelPhases.ChargePurchase ||
+            phase === RightPanelPhases.BillPayment);
 
     const onServicesClick = (): void => {
         RightPanelStore.instance.setCard({ phase: RightPanelPhases.Services }, true, undefined);
@@ -427,7 +443,11 @@ const ServicesButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> 
 };
 
 const AgricultureButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> = ({ isPanelCollapsed }) => {
-    const currentCard = useEventEmitterState(RightPanelStore.instance, UPDATE_EVENT, () => RightPanelStore.instance.currentCard);
+    const currentCard = useEventEmitterState(
+        RightPanelStore.instance,
+        UPDATE_EVENT,
+        () => RightPanelStore.instance.currentCard,
+    );
     const isSelected = currentCard.phase === RightPanelPhases.Agriculture && RightPanelStore.instance.isOpen;
 
     const onAgricultureClick = (): void => {
@@ -450,6 +470,33 @@ const AgricultureButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed"
                 onClick={onAgricultureClick}
                 isNarrow={isPanelCollapsed}
                 selected={isSelected}
+                size="32px"
+            />
+        </li>
+    );
+};
+
+const SettingsButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed">> = ({ isPanelCollapsed }) => {
+    const onSettingsClick = (): void => {
+        defaultDispatcher.dispatch({
+            action: Action.ViewUserSettings,
+        });
+    };
+
+    return (
+        <li
+            className={classNames("mx_SpaceItem", {
+                collapsed: isPanelCollapsed,
+            })}
+            role="treeitem"
+            aria-selected={false}
+        >
+            <SpaceButton
+                className="mx_SpaceButton_settings"
+                label=""
+                onClick={onSettingsClick}
+                isNarrow={isPanelCollapsed}
+                selected={false}
                 size="32px"
             />
         </li>
@@ -541,8 +588,13 @@ const InnerSpacePanel = React.memo<IInnerSpacePanelProps>(
         const [invites, metaSpaces, actualSpaces, activeSpace] = useSpaces();
         const activeSpaces = activeSpace ? [activeSpace] : [];
 
-        const currentCard = useEventEmitterState(RightPanelStore.instance, UPDATE_EVENT, () => RightPanelStore.instance.currentCard);
-        const isCustomPanelOpen = RightPanelStore.instance.isOpen && CUSTOM_PHASES.includes(currentCard.phase as RightPanelPhases);
+        const currentCard = useEventEmitterState(
+            RightPanelStore.instance,
+            UPDATE_EVENT,
+            () => RightPanelStore.instance.currentCard,
+        );
+        const isCustomPanelOpen =
+            RightPanelStore.instance.isOpen && CUSTOM_PHASES.includes(currentCard.phase as RightPanelPhases);
 
         const moduleSpaceItems = useModuleSpacePanelItems(ModuleApi.instance.extras);
 
@@ -550,91 +602,105 @@ const InnerSpacePanel = React.memo<IInnerSpacePanelProps>(
             .filter((key) => !(key === MetaSpace.VideoRooms && !SettingsStore.getValue("feature_video_rooms")))
             .map((key) => {
                 const Component = metaSpaceComponentMap[key];
-                return <Component key={key} selected={!isCustomPanelOpen && activeSpace === key} isPanelCollapsed={isPanelCollapsed} />;
+                return (
+                    <Component
+                        key={key}
+                        selected={!isCustomPanelOpen && activeSpace === key}
+                        isPanelCollapsed={isPanelCollapsed}
+                    />
+                );
             });
 
         return (
-            <IndicatorScrollbar
-                {...props}
-                wrappedRef={innerRef}
-                className="mx_SpaceTreeLevel"
-                style={
-                    isDraggingOver
-                        ? {
-                            pointerEvents: "none",
-                        }
-                        : undefined
-                }
-                element="ul"
-                role="tree"
-                aria-label={_t("common|spaces")}
-            >
-                {metaSpacesSection}
-                {invites.map((s) => (
-                    <SpaceItem
-                        key={s.roomId}
-                        space={s}
-                        activeSpaces={activeSpaces}
-                        isPanelCollapsed={isPanelCollapsed}
-                        onExpand={() => setPanelCollapsed(false)}
-                    />
-                ))}
-                {actualSpaces.map((s, i) => (
-                    <Draggable key={s.roomId} draggableId={s.roomId} index={i}>
-                        {(provided, snapshot) => (
-                            <SpaceItem
-                                {...provided.draggableProps}
-                                dragHandleProps={provided.dragHandleProps}
-                                key={s.roomId}
-                                innerRef={provided.innerRef}
-                                className={snapshot.isDragging ? "mx_SpaceItem_dragging" : undefined}
-                                space={s}
-                                activeSpaces={activeSpaces}
-                                isPanelCollapsed={isPanelCollapsed}
-                                onExpand={() => setPanelCollapsed(false)}
-                            />
-                        )}
-                    </Draggable>
-                ))}
-                {children}
-                {moduleSpaceItems.map((item) => (
-                    <li
-                        key={item.spaceKey}
-                        className={classNames("mx_SpaceItem", {
-                            collapsed: isPanelCollapsed,
-                        })}
-                        role="treeitem"
-                        aria-selected={false} // TODO
-                    >
-                        <SpaceButton
-                            {...item}
-                            isNarrow={isPanelCollapsed}
-                            size="32px"
-                            selected={activeSpace === item.spaceKey}
-                            onClick={() => {
-                                SpaceStore.instance.setActiveSpace(item.spaceKey);
-                                item.onSelected?.();
-                            }}
+            <>
+                <IndicatorScrollbar
+                    {...props}
+                    wrappedRef={innerRef}
+                    className="mx_SpaceTreeLevel"
+                    style={
+                        isDraggingOver
+                            ? {
+                                  pointerEvents: "none",
+                              }
+                            : undefined
+                    }
+                    element="ul"
+                    role="tree"
+                    aria-label={_t("common|spaces")}
+                >
+                    <AgricultureButton isPanelCollapsed={isPanelCollapsed} />
+                    {metaSpacesSection}
+                    {invites.map((s) => (
+                        <SpaceItem
+                            key={s.roomId}
+                            space={s}
+                            activeSpaces={activeSpaces}
+                            isPanelCollapsed={isPanelCollapsed}
+                            onExpand={() => setPanelCollapsed(false)}
                         />
-                    </li>
-                ))}
-                {/* {shouldShowComponent(UIComponent.CreateSpaces) && (
+                    ))}
+                    {actualSpaces.map((s, i) => (
+                        <Draggable key={s.roomId} draggableId={s.roomId} index={i}>
+                            {(provided, snapshot) => (
+                                <SpaceItem
+                                    {...provided.draggableProps}
+                                    dragHandleProps={provided.dragHandleProps}
+                                    key={s.roomId}
+                                    innerRef={provided.innerRef}
+                                    className={snapshot.isDragging ? "mx_SpaceItem_dragging" : undefined}
+                                    space={s}
+                                    activeSpaces={activeSpaces}
+                                    isPanelCollapsed={isPanelCollapsed}
+                                    onExpand={() => setPanelCollapsed(false)}
+                                />
+                            )}
+                        </Draggable>
+                    ))}
+                    {children}
+                    {moduleSpaceItems.map((item) => (
+                        <li
+                            key={item.spaceKey}
+                            className={classNames("mx_SpaceItem", {
+                                collapsed: isPanelCollapsed,
+                            })}
+                            role="treeitem"
+                            aria-selected={false} // TODO
+                        >
+                            <SpaceButton
+                                {...item}
+                                isNarrow={isPanelCollapsed}
+                                size="32px"
+                                selected={activeSpace === item.spaceKey}
+                                onClick={() => {
+                                    SpaceStore.instance.setActiveSpace(item.spaceKey);
+                                    item.onSelected?.();
+                                }}
+                            />
+                        </li>
+                    ))}
+                    {/* {shouldShowComponent(UIComponent.CreateSpaces) && (
                     <CreateSpaceButton isPanelCollapsed={isPanelCollapsed} setPanelCollapsed={setPanelCollapsed} />
                 )} */}
-                <ServicesButton isPanelCollapsed={isPanelCollapsed} />
-                <AgricultureButton isPanelCollapsed={isPanelCollapsed} />
-                {/* <CardToCardButton isPanelCollapsed={isPanelCollapsed} />
+                    <ServicesButton isPanelCollapsed={isPanelCollapsed} />
+                    {/* <CardToCardButton isPanelCollapsed={isPanelCollapsed} />
                 <ChargePurchaseButton isPanelCollapsed={isPanelCollapsed} />
                 <BillPaymentButton isPanelCollapsed={isPanelCollapsed} /> */}
-            </IndicatorScrollbar>
+                </IndicatorScrollbar>
+                <SettingsButton isPanelCollapsed={isPanelCollapsed} />
+            </>
         );
     },
 );
 
 const SpacePanel: React.FC = () => {
     const [dragging, setDragging] = useState(false);
-    const [isPanelCollapsed, setPanelCollapsed] = useState(true);
+    const [isPanelCollapsed, setPanelCollapsed] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        RightPanelStore.instance.setCard({ phase: RightPanelPhases.Agriculture }, true);
+    }, []);
+
     useLayoutEffect(() => {
         if (ref.current) UIStore.instance.trackElementDimensions("SpacePanel", ref.current);
         return () => UIStore.instance.stopTrackingElementDimensions("SpacePanel");
@@ -694,9 +760,9 @@ const SpacePanel: React.FC = () => {
                             ref={ref}
                             aria-label={_t("common|spaces")}
                         >
-                            <ToggleRoomListButton isPanelCollapsed={isPanelCollapsed} />
+                            {/* <ToggleRoomListButton isPanelCollapsed={isPanelCollapsed} /> */}
                             <UserMenu isPanelCollapsed={isPanelCollapsed}>
-                                <AccessibleButton
+                                {/* <AccessibleButton
                                     className={classNames("mx_SpacePanel_toggleCollapse", {
                                         expanded: !isPanelCollapsed,
                                     })}
@@ -708,7 +774,7 @@ const SpacePanel: React.FC = () => {
                                             className="mx_SpacePanel_Tooltip_KeyboardShortcut"
                                         />
                                     }
-                                />
+                                /> */}
                             </UserMenu>
                             <Droppable droppableId="top-level-spaces">
                                 {(provided, snapshot) => (

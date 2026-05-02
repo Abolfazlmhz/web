@@ -25,10 +25,12 @@ Please see LICENSE files in the repository root for full details.
     /* Create another flexbox so the Panel fills the container */
     display: flex;
     flex-direction: column;
+    align-items: center;
+    width: 92px;
 
-    &.collapsed {
+    /* &.collapsed {
         width: 68px;
-    }
+    } */
 
     &.newUi {
         background-color: var(--cpd-color-bg-canvas-default);
@@ -97,6 +99,7 @@ Please see LICENSE files in the repository root for full details.
     .mx_SpaceItem {
         display: inline-flex;
         flex-flow: wrap;
+        margin-bottom: 12px;
 
         &.mx_SpaceItem_narrow {
             align-self: baseline;
@@ -137,11 +140,13 @@ Please see LICENSE files in the repository root for full details.
                 background-color: var(--activeBackground-color);
 
                 .mx_SpaceButton_icon::before {
-                    background-color: #ffffff;
+                    background-color: #2f6b3f;
+                    border-radius: 14px;
                 }
 
                 .mx_SpaceButton_name {
-                    color: #ffffff;
+                    color: #000;
+                    font-weight: 600;
                 }
             }
 
@@ -162,6 +167,8 @@ Please see LICENSE files in the repository root for full details.
         }
 
         .mx_SpaceButton_selectionWrapper {
+            background: transparent !important;
+            flex-direction: column;
             position: relative;
             display: flex;
             flex: 1;
@@ -178,13 +185,16 @@ Please see LICENSE files in the repository root for full details.
         }
 
         .mx_SpaceButton_name {
-            flex: 1;
-            margin-left: 8px;
+            margin-top: 6px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 16px;
+            color: #666;
+            font-family: inherit;
             white-space: nowrap;
-            display: block;
-            text-overflow: ellipsis;
             overflow: hidden;
-            font: var(--cpd-font-body-md-regular);
+            text-overflow: ellipsis;
         }
 
         .mx_SpaceButton_toggleCollapse {
@@ -225,10 +235,10 @@ Please see LICENSE files in the repository root for full details.
         &.mx_SpaceButton_orphans,
         &.mx_SpaceButton_videoRooms {
             .mx_SpaceButton_icon {
-                background-color: $panel-actions;
+                /* background-color: $panel-actions; */
 
                 &::before {
-                    background-color: $secondary-content;
+                    /* background-color: $secondary-content; */
                 }
             }
         }
@@ -238,6 +248,7 @@ Please see LICENSE files in the repository root for full details.
         }
 
         &.mx_SpaceButton_home .mx_SpaceButton_icon::before {
+            background-color: $secondary-content;
             mask-image: url("@vector-im/compound-design-tokens/icons/chat-solid.svg");
         }
 
@@ -270,7 +281,7 @@ Please see LICENSE files in the repository root for full details.
         }
 
         &.mx_SpaceButton_cardToCard .mx_SpaceButton_icon {
-            background-color: $panel-actions;
+            /* background-color: $panel-actions; */
 
             &::before {
                 background-color: $secondary-content;
@@ -281,7 +292,7 @@ Please see LICENSE files in the repository root for full details.
         }
 
         &.mx_SpaceButton_chargePurchase .mx_SpaceButton_icon {
-            background-color: $panel-actions;
+            /* background-color: $panel-actions; */
 
             &::before {
                 background-color: $secondary-content;
@@ -292,7 +303,7 @@ Please see LICENSE files in the repository root for full details.
         }
 
         &.mx_SpaceButton_billPayment .mx_SpaceButton_icon {
-            background-color: $panel-actions;
+            /* background-color: $panel-actions; */
 
             &::before {
                 background-color: $secondary-content;
@@ -303,7 +314,7 @@ Please see LICENSE files in the repository root for full details.
         }
 
         &.mx_SpaceButton_services .mx_SpaceButton_icon {
-            background-color: $panel-actions;
+            /* background-color: $panel-actions; */
 
             &::before {
                 background-color: $secondary-content;
@@ -314,7 +325,7 @@ Please see LICENSE files in the repository root for full details.
         }
 
         &.mx_SpaceButton_agriculture .mx_SpaceButton_icon {
-            background-color: $panel-actions;
+            /* background-color: $panel-actions; */
 
             &::before {
                 background-color: $secondary-content;
@@ -325,6 +336,7 @@ Please see LICENSE files in the repository root for full details.
         }
 
         .mx_SpaceButton_menuButton {
+            display: none !important;
             width: 20px;
             min-width: 20px; /* yay flex */
             height: 20px;
@@ -394,15 +406,15 @@ Please see LICENSE files in the repository root for full details.
         }
     }
 
-    .mx_SpaceButton:hover,
+    /* .mx_SpaceButton:hover,
     .mx_SpaceButton:focus-within,
     .mx_SpaceButton_hasMenuOpen {
         &:not(.mx_SpaceButton_narrow):not(.mx_SpaceButton_invite) .mx_SpaceButton_menuButton {
             display: block;
         }
-    }
+    } */
 
-    .mx_SpaceItem:not(.mx_SpaceItem_new) {
+    /* .mx_SpaceItem:not(.mx_SpaceItem_new) {
         .mx_SpaceButton:hover,
         .mx_SpaceButton:focus-within,
         .mx_SpaceButton_hasMenuOpen {
@@ -410,7 +422,7 @@ Please see LICENSE files in the repository root for full details.
                 max-width: calc(100% - 56px);
             }
         }
-    }
+    } */
 
     /* root space buttons are bigger and not indented */
     & > .mx_AutoHideScrollbar {
@@ -601,6 +613,11 @@ Please see LICENSE files in the repository root for full details.
         font-family: inherit;
         text-transform: capitalize;
     }
+}
+
+.mx_SpaceButton_settings .mx_SpaceButton_icon::before {
+    mask-image: url("@vector-im/compound-design-tokens/icons/settings-solid.svg");
+    background-color: $secondary-content;
 }
 
 /* Mobile responsive layout */

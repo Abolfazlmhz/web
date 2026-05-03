@@ -760,11 +760,12 @@
         "twemoji_colr": "The <colr>twemoji-colr</colr> font is © <author>Mozilla Foundation</author> used under the terms of <terms>Apache 2.0</terms>."
     },
     "custom_panels": {
-        "agriculture": "Agriculture",
+        "agriculture": "Home",
         "agriculture_consultant": "Agriculture Consultant",
         "agriculture_organizations": "Interact with Organizations",
         "agriculture_market": "Marketplace",
         "agriculture_education": "Training & Expert Consulting",
+        "quick_access": "Quick Access",
         "agriculture_climate": "Climate Conditions",
         "agriculture_club": "Farmers Club",
         "agriculture_insurance": "Agricultural Insurance",
